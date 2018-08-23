@@ -65,3 +65,16 @@ export const addUserRooms = async (user, data) => {
       time
     })
 }
+
+export const clearNotification = async (user, notifications) => {
+  const batch = firebase.db.batch()
+  notifications.forEarch(item => {
+    const ref = firebase.db
+      .collection('notifications')
+      .doc(`${user.uid}`)
+      .collection('messages')
+      .doc(`${notifications.uid}`)
+    batch.update(ref, { enable: false })
+  })
+  return batch.commit()
+}

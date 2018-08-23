@@ -28,7 +28,7 @@ class Rooms extends Component {
   }
 
   render () {
-    const { rooms = [], notifications = [] } = this.props
+    const { rooms = [] } = this.props
     return (
       <div>
         <ChatList
@@ -36,17 +36,13 @@ class Rooms extends Component {
           onClick={this.openRoom}
           dataSource={
             rooms.map(item => {
-              let notification = 0
-              if (notifications.some((noti) => noti.ref === item.id)) {
-                notification = 1
-              }
               return {
                 avatar: require('../../../assets/images/no-image-icon.png'),
                 alt: 'Reactjs',
                 title: item.guestName,
                 subtitle: item.message,
-                date: new Date(),
-                unread: notification,
+                date: new Date(item.last && item.last.seconds),
+                unread: item.unread || 0,
                 ...item
               }
             })} />

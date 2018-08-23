@@ -61,12 +61,17 @@ export default class Root extends Component {
       .collection('notifications')
       .doc(`${authUser.uid}`)
       .collection('messages')
+      .where('enable', '==', true)
       .orderBy('time', 'desc')
       .limit(5)
       .onSnapshot((snap) => {
         const data = []
         snap.docs.forEach((item) => {
-          data.push(item.data())
+          console.log('item', item)
+          data.push({
+            uid: item.id,
+            ...item.data()
+          })
         })
         storeAccessible.dispatch(setNotification(data))
       })

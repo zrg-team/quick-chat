@@ -10,7 +10,7 @@ class Components extends React.Component {
     const { classes } = this.props
     return (
       <div>
-        <div className={classNames(classes.main, classes.mainRaised)}>
+        <div className={classNames(classes.main)}>
           <LoginForm />
         </div>
       </div>

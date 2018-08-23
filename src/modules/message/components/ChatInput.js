@@ -14,6 +14,11 @@ class ChatInput extends Component {
     this.onChange = this.onChange.bind(this)
   }
 
+  componentDidMount () {
+    const { markReaded, room } = this.props
+    markReaded(room)
+  }
+
   send () {
     const { value } = this.state
     const { user, send, selected } = this.props
@@ -21,7 +26,6 @@ class ChatInput extends Component {
       return
     }
     const errors = validate({ website: value }, URL_SCHEMA)
-    console.log('errors, errors', errors)
     const type = errors ? 'text' : 'url'
     send(user, selected, {
       message: value

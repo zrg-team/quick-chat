@@ -9,7 +9,8 @@ export const createRoom = async (user, { uid }, message = 'Chat me !') => {
       guest: uid,
       user: user.uid,
       notification: 0,
-      time
+      time,
+      last: time
     })
   return { room }
 }
@@ -26,4 +27,16 @@ export const createNotification = (friend, user, room, message) => {
       ref: room.uid,
       count: 1
     })
+}
+
+export const markReaded = async (room) => {
+  const time = firebaseApp.firestore.FieldValue.serverTimestamp()
+  const newRef = firebase.db.collection(`rooms`).doc(`${room.id}`)
+  return newRef.update({
+    last: time,
+    unread: 0
+  }).then(response => {
+    // return updateRooms(user, room, data.message)
+    return true
+  })
 }

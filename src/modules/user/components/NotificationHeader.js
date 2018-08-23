@@ -26,12 +26,13 @@ class NotificationHeader extends React.Component {
   }
   handleOpenNotification () {
     const { openNotification } = this.state
-    const { clearNotification } = this.props
+    const { clearNotification, notifications, user } = this.props
     this.setState({
       openNotification: !openNotification
     })
-    if (!openNotification === false) {
-      clearNotification()
+    if (!openNotification === false && notifications.length) {
+      console.log('user', user, notifications)
+      clearNotification(user, notifications)
     }
   }
   render () {

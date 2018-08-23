@@ -3,6 +3,7 @@ import ChatInput from '../components/ChatInput'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import { sendMessage } from '../repository'
+import { markReaded } from '../../room/repository'
 
 const mapDispatchToProps = (dispatch, props) => ({
   send: async (user, selected, {
@@ -17,6 +18,13 @@ const mapDispatchToProps = (dispatch, props) => ({
     } catch (err) {
       console.log('send err', err)
     }
+  },
+  markReaded: async (room) => {
+    try {
+      await markReaded(room)
+    } catch (err) {
+      console.log('send err', err)
+    }
   }
 })
 
@@ -24,7 +32,8 @@ const mapStateToProps = state => {
   const selected = state[MODULE_MESSAGE].selected
   return {
     selected,
-    user: state[MODULE_USER].userInformation
+    user: state[MODULE_USER].userInformation,
+    room: state[MODULE_MESSAGE].selected
   }
 }
 
