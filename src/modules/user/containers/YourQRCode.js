@@ -40,7 +40,9 @@ const mapDispatchToProps = (dispatch, props) => ({
             host: user.uid,
             hostName: user.email,
             id: result.room.id,
-            message
+            message,
+            guestPublic: friend.publicKey,
+            userPublic: user.publicKey
           })
           response && dispatch(setFriend(null))
           return response || false

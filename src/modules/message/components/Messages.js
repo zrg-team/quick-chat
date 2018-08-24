@@ -33,9 +33,8 @@ class Messages extends Component {
           dataSource={messages.map(item => {
             const sender = user.uid === item.from
             const type = ['text', 'url'].includes(item.type) ? 'text' : item.type
-            console.log('item.type', item.type)
             return {
-              title: sender ? 'Me' : selected.guestName,
+              title: sender ? undefined : selected.guestName,
               position: sender ? 'right' : 'left',
               type: type,
               text: item.type !== 'url'

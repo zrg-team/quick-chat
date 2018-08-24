@@ -11,8 +11,8 @@ class Rooms extends Component {
   }
 
   openRoom (item) {
-    const { goTo } = this.props
-    goTo(item)
+    const { goTo, needed } = this.props
+    goTo(item, needed)
   }
 
   async componentDidMount () {

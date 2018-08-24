@@ -5,7 +5,29 @@ export async function getUser (user) {
   try {
     const result = await firebase.db.collection('users').doc(user.uid).get()
     if (result.exists) {
-      return { ...result.data(), uid: user.uid }
+      const data = result.data()
+      // if (!data.publicKey) {
+        // const makeMeStrong = firebase
+        //   .functions
+        //   .httpsCallable('makeMeStrong')
+        // const keys = await makeMeStrong({ pass: 'hello' })
+        // console.log('keys', keys)
+        // Generate keys
+        // const ec = new EC('curve25519')
+        // const key = ec.keyFromPrivate(`${me}.`)
+        // console.log('key1.getPublic()', key1.getPublic(false, 'hex'))
+        // // 3a1754b57f5b66eaca28bf5d006f93eb287ba3f9535827ce318170c5394ffdc4
+        // const public2 = ec.keyFromPublic('3a1754b57f5b66eaca28bf5d006f93eb287ba3f9535827ce318170c5394ffdc4', 'hex')
+        // console.log('public1', public2)
+        // var shared1 = key1.derive(key2.getPublic())
+        // var shared2 = key2.derive(public2.getPublic())
+
+        // console.log('Both shared secrets are BN instances')
+        // console.log(shared1.toString(16))
+        // console.log(shared2.toString(16))
+      //   return false
+      // }
+      return { ...data, uid: user.uid }
     }
     return undefined
   } catch (err) {
@@ -77,4 +99,15 @@ export const clearNotification = async (user, notifications) => {
     batch.update(ref, { enable: false })
   })
   return batch.commit()
+}
+
+export const setUserPublicKey = async (user, publicKey) => {
+  return firebase.db
+    .collection('users')
+    .doc(`${user.uid}`)
+    .update({
+      publicKey
+    }).then(response => {
+      return { publicKey, response }
+    })
 }

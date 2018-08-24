@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { loading } from '../../../common/middlewares/effects'
+import { getMe } from '../../../common/utils/cryptography'
 import storeAccessible from '../../../common/utils/storeAccessible'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
@@ -22,7 +23,7 @@ function parseDocs (data) {
     if (timestamp && timestamp.seconds && timestamp.seconds > +offset) {
       max = +max > +timestamp.seconds ? +max : +timestamp.seconds
       docs.push({
-        data: item.data,
+        data: getMe(item.data, selected.shared),
         from: item.from,
         time: timestamp.seconds,
         type: item.type,

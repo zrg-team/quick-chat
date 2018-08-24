@@ -1,47 +1,25 @@
 import React, { Component } from 'react'
-import AriaModal from 'react-aria-modal'
+import Card from '@material-ui/core/Card'
+import Modal from '@material-ui/core/Modal'
+import { withStyles } from '@material-ui/core/styles'
 
-class Modal extends Component {
+class ModalComponent extends Component {
   constructor (props) {
     super(props)
     this.state = {
       isShow: false,
-      component: undefined,
-      deactiveCallback: undefined,
-      enterCallback: undefined,
-      initialFocus: '',
-      underlayStyle: {},
-      focusDialog: true,
-      escapeExits: false,
-      animated: true,
-      modalHasEntered: false
+      component: undefined
     }
 
-    this.onModalEnter = this.onModalEnter.bind(this)
     this.activateModal = this.activateModal.bind(this)
     this.deactivateModal = this.deactivateModal.bind(this)
     this.getApplicationNode = this.getApplicationNode.bind(this)
   }
 
-  activateModal (component, title, animated, {
-    enterCallback = undefined,
-    initialFocus = '',
-    deactiveCallback = undefined,
-    underlayStyle = {},
-    focusDialog = true,
-    escapeExits = false
-  }) {
+  activateModal (component) {
     this.setState({
       isShow: true,
-      animated,
-      component,
-      title,
-      deactiveCallback,
-      initialFocus,
-      underlayStyle,
-      focusDialog,
-      escapeExits,
-      enterCallback
+      component
     })
   }
 
@@ -51,14 +29,7 @@ class Modal extends Component {
     this.setState({
       isShow: false,
       title: '',
-      component: undefined,
-      enterCallback: undefined,
-      deactiveCallback: undefined,
-      initialFocus: '',
-      underlayStyle: {},
-      focusDialog: true,
-      escapeExits: false,
-      modalHasEntered: false
+      component: undefined
     })
   }
 
@@ -80,55 +51,42 @@ class Modal extends Component {
     }
   }
 
-  onModalEnter () {
-    const { enterCallback, animated } = this.state
-
-    enterCallback && enterCallback()
-    animated && this.setState({ modalHasEntered: true })
-  }
-
   render () {
-    const { isShow, title, initialFocus, underlayStyle, component, focusDialog, escapeExits, modalHasEntered } = this.state
-
-    let dialogContentClass = 'modal modal--animated'
-    let underlayClass = 'underlayModal'
-    if (modalHasEntered) {
-      dialogContentClass += ' has-entered'
-      underlayClass += ' has-entered'
-    }
-    if (!isShow || !component) {
-      return null
-    }
+    const { classes } = this.props
+    const { isShow, component } = this.state
 
     return (
-      <AriaModal
-        titleText={title}
-        onExit={this.deactivateModal}
-        onEnter={this.onModalEnter}
-        initialFocus={initialFocus}
-        getApplicationNode={this.getApplicationNode}
-        underlayStyle={underlayStyle}
-        focusDialog={focusDialog}
-        escapeExits={escapeExits}
-        underlayClass={underlayClass}
+      <Modal
+        aria-labelledby='simple-modal-title'
+        aria-describedby='simple-modal-description'
+        open={isShow}
+        onClose={this.deactivateModal}
       >
-        <div className={dialogContentClass}>
+        <Card className={classes.card}>
           {component}
-        </div>
-      </AriaModal>
+        </Card>
+      </Modal>
     )
   }
 }
 
+const styles = theme => ({
+  card: {
+    maxWidth: '100%'
+  }
+})
+
+const ModalWithStyle = withStyles(styles)(ModalComponent)
+
 export default {
-  Component: Modal,
-  show (component, title = '', animated = true, params = {}) {
-    Modal.instance && Modal.instance.activateModal(component, title, animated, params)
+  Component: ModalWithStyle,
+  show (component) {
+    ModalWithStyle.instance && ModalWithStyle.instance.activateModal(component)
   },
   hide () {
-    Modal.instance && Modal.instance.deactivateModal()
+    ModalWithStyle.instance && ModalWithStyle.instance.deactivateModal()
   },
   getApplicationNode () {
-    return (Modal.instance && Modal.instance.getApplicationNode()) || undefined
+    return (ModalWithStyle.instance && ModalWithStyle.instance.getApplicationNode()) || undefined
   }
 }

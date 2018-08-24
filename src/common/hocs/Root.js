@@ -5,10 +5,10 @@ import web3 from '../utils/web3'
 import firebase from '../utils/firebase'
 import { loading } from '../middlewares/effects'
 import storeAccessible from '../utils/storeAccessible'
-import { signOut } from '../utils/authentication'
+import { signOut, updatePublicKey } from '../utils/authentication'
 import { getUser } from '../../modules/user/repository'
 import { setUserInformation, setNotification } from '../../modules/user/actions'
-import Main from './Main'
+import MainPage from './MainPage'
 
 export default class Root extends Component {
   constructor (props) {
@@ -93,8 +93,16 @@ export default class Root extends Component {
 
   async authenticationChange (authUser) {
     if (authUser) {
-      const result = await loading(() => {
-        return getUser(authUser)
+      const result = await loading(async () => {
+        const user = await getUser(authUser)
+        // We need a password again for generate publicKey
+        if (user && !user.publicKey) {
+          // Maybe case without password login
+          // Modal.show(<PasswordModal />)
+          const { publicKey } = await updatePublicKey(user)
+          user.publicKey = publicKey
+        }
+        return user
       })
       if (result && !this.emailLink) {
         this.notificationListener(authUser)
@@ -120,13 +128,17 @@ export default class Root extends Component {
       }
       signOut()
     }
+    // Logout clear all
+    if (this.notificationListenerInstance) {
+      this.notificationListenerInstance()
+    }
     storeAccessible.dispatch(setUserInformation(null))
   }
 
   render () {
     const { store, persistor, history } = this.props
     return (
-      <Main
+      <MainPage
         store={store}
         history={history}
         persistor={persistor}

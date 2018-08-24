@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import ChatInput from '../components/ChatInput'
+import { cryptMe } from '../../../common/utils/cryptography'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import { sendMessage } from '../repository'
@@ -11,7 +12,7 @@ const mapDispatchToProps = (dispatch, props) => ({
   }, type = 'text') => {
     try {
       await sendMessage(user, selected, {
-        data: message,
+        data: cryptMe(message, selected.shared),
         from: user.uid,
         type
       })

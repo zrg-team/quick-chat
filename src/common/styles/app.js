@@ -38,7 +38,8 @@ const appStyle = theme => ({
     flexDirection: 'column'
   },
   flexContainer: {
-    flex: 1
+    flex: 1,
+    overflow: 'auto'
   },
   messageContainer: {
     display: 'flex',

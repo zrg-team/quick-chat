@@ -98,17 +98,15 @@ class LoginForm extends Component {
                 <form className={classes.form}>
                   <CardHeader color='primary' className={classes.cardHeader}>
                     <h4>Login</h4>
+                    <div className={classes.socialLine}>
+                      <IconButton
+                        color='transparent'
+                        onClick={this.loginEmail}
+                      >
+                        <Email titleAccess={'Email'} />
+                      </IconButton>
+                    </div>
                   </CardHeader>
-                  <div className={classes.socialLine}>
-                    <IconButton
-                      color='transparent'
-                      onClick={this.loginEmail}
-                    >
-                      <Email titleAccess={'Email'} />
-                    </IconButton>
-                    <span>Magic Email</span>
-                  </div>
-                  <p className={classes.divider}>Or</p>
                   <CardBody>
                     <CustomInput
                       labelText='Email'
