@@ -16,7 +16,8 @@ const defaultState = {
   fetching: {},
   loadingCount: 0,
   isLoading: false,
-  authetication: false
+  authetication: false,
+  approveHash: null
 }
 
 const handlers = {
@@ -51,7 +52,13 @@ const handlers = {
       loadingCount: state.loadingCount - 1,
       isLoading: state.loadingCount > 1
     }
-  })
+  }),
+  [actions.setUserApproveHash]: (state, action) => {
+    return {
+      ...state,
+      approveHash: action.payload
+    }
+  }
 }
 
 export default handleActions(handlers, defaultState)

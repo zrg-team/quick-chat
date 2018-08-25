@@ -13,10 +13,10 @@ class MessagesPage extends React.Component {
     return (
       <MenuPage>
         <div className={classes.messageContainer}>
-          <div className={`${classes.scrollBar} scrollbar`} style={{ flex: 1, overflowY: 'auto' }}>
+          <div className={`scrollbar`} style={{ flex: 1, overflowY: 'auto' }}>
             <Messages />
           </div>
-          <div style={{ marginTop: 10, height: 90, overflowY: 'hidden' }} >
+          <div style={{ marginTop: 10, height: 110, overflowY: 'hidden' }} >
             <ChatInput />
           </div>
         </div>

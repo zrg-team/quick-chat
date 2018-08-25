@@ -1,6 +1,17 @@
 import React, { Component } from 'react'
 import validate from 'validate.js'
 import { Input } from 'react-chat-elements'
+import {
+  Icon,
+  withStyles,
+  BottomNavigation,
+  BottomNavigationAction
+} from '@material-ui/core'
+import {
+  Restore as RestoreIcon,
+  Favorite as FavoriteIcon,
+  LocationOn as LocationOnIcon
+} from '@material-ui/icons'
 import { URL_SCHEMA } from '../../../common/utils/regex'
 import Button from '../../../libraries/CustomButtons/Button'
 
@@ -12,11 +23,6 @@ class ChatInput extends Component {
     }
     this.send = this.send.bind(this)
     this.onChange = this.onChange.bind(this)
-  }
-
-  componentDidMount () {
-    const { markReaded, room } = this.props
-    markReaded(room)
   }
 
   send () {
@@ -43,12 +49,14 @@ class ChatInput extends Component {
   }
 
   render () {
+    const { classes } = this.props
     const { value } = this.state
     return (
       <div>
         <Input
           placeholder='Type here...'
           multiline
+          className={`${classes.inputStyle}`}
           value={value}
           onChange={this.onChange}
           ref={ref => {
@@ -64,9 +72,48 @@ class ChatInput extends Component {
               Send
             </Button>
           } />
+        <BottomNavigation value={value} onChange={this.handleChange} className={classes.root}>
+          <BottomNavigationAction
+            label='Recents'
+            value='recents'
+            className={classes.iconStyle}
+            icon={<RestoreIcon />}
+          />
+          <BottomNavigationAction
+            label='Favorites'
+            value='favorites'
+            className={classes.iconStyle}
+            icon={<FavoriteIcon />}
+          />
+          <BottomNavigationAction
+            label='Nearby'
+            value='nearby'
+            className={classes.iconStyle}
+            icon={<LocationOnIcon />}
+          />
+          <BottomNavigationAction
+            label='Folder'
+            value='folder'
+            className={classes.iconStyle}
+            icon={<Icon>folder</Icon>}
+          />
+        </BottomNavigation>
       </div>
     )
   }
 }
 
-export default ChatInput
+const styles = {
+  root: {
+    width: '100%',
+    height: 40
+  },
+  inputStyle: {
+    height: 60
+  },
+  iconStyle: {
+    paddingTop: '0px !important'
+  }
+}
+
+export default withStyles(styles)(ChatInput)

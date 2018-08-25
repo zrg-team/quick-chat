@@ -1,21 +1,29 @@
 import React, { Component } from 'react'
-import store from 'store'
+// import store from 'store'
 import locate from '../utils/locate'
 import web3 from '../utils/web3'
 import firebase from '../utils/firebase'
 import { loading } from '../middlewares/effects'
 import storeAccessible from '../utils/storeAccessible'
-import { signOut, updatePublicKey } from '../utils/authentication'
+import {
+  signOut,
+  updatePublicKey,
+  validateSessionKey,
+  shouldGenerateApproveID
+} from '../utils/authentication'
 import { getUser } from '../../modules/user/repository'
+import { requestMessageToken } from '../utils/notifications'
 import { setUserInformation, setNotification } from '../../modules/user/actions'
 import MainPage from './MainPage'
 
 export default class Root extends Component {
   constructor (props) {
     super(props)
-    this.userListener = null
+
     this.emailLink = false
+    this.userListenerInstance = null
     this.notificationListenerInstance = null
+    this.userListener = this.userListener.bind(this)
     this.notificationListener = this.notificationListener.bind(this)
     this.authenticationChange = this.authenticationChange.bind(this)
   }
@@ -28,29 +36,44 @@ export default class Root extends Component {
     try {
       await locate()
       await web3.init()
-      if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
-        let email = store.get('authenticationMail')
-        if (!email) {
-          email = window.prompt('Please provide your email for confirmation')
-        }
-        // The client SDK will parse the code from the link for you.
-        firebase.auth.signInWithEmailLink(email, window.location.href)
-          .then(async (result) => {
-            // Clear email from storage.
-            store.set('authenticationMail', null)
-            this.emailLink = true
-          })
-          .catch(() => {
-            store.set('authenticationMail', null)
-            storeAccessible.dispatch(setUserInformation(null))
-            this.emailLink = false
-            signOut()
-          })
-      }
+      // if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
+      //   let email = store.get('authenticationMail')
+      //   if (!email) {
+      //     email = window.prompt('Please provide your email for confirmation')
+      //   }
+      //   // The client SDK will parse the code from the link for you.
+      //   firebase.auth.signInWithEmailLink(email, window.location.href)
+      //     .then(async (result) => {
+      //       // Clear email from storage.
+      //       store.set('authenticationMail', null)
+      //       this.emailLink = true
+      //     })
+      //     .catch(() => {
+      //       store.set('authenticationMail', null)
+      //       storeAccessible.dispatch(setUserInformation(null))
+      //       this.emailLink = false
+      //       signOut()
+      //     })
+      // }
       firebase.auth.onAuthStateChanged(this.authenticationChange)
     } catch (error) {
       console.log('Fatal Error. Cannot Initialize.', error)
     }
+  }
+
+  userListener (authUser) {
+    if (this.userListenerInstance) {
+      this.userListenerInstance()
+    }
+    this.userListenerInstance = firebase.db
+      .collection('users')
+      .doc(`${authUser.uid}`)
+      .onSnapshot((snap) => {
+        if (snap.data() && !validateSessionKey(snap.data())) {
+          signOut()
+          storeAccessible.dispatch(setUserInformation(null))
+        }
+      })
   }
 
   notificationListener (authUser) {
@@ -67,7 +90,6 @@ export default class Root extends Component {
       .onSnapshot((snap) => {
         const data = []
         snap.docs.forEach((item) => {
-          console.log('item', item)
           data.push({
             uid: item.id,
             ...item.data()
@@ -75,64 +97,65 @@ export default class Root extends Component {
         })
         storeAccessible.dispatch(setNotification(data))
       })
-    // firebase.db
-    // .collection('notifications')
-    // .doc(`${authUser.uid}`)
-    // .collection('messages')
-    // .orderBy('time', 'desc')
-    // .limit(5)
-    // .get()
-    // .then((snap) => {
-    //   const data = []
-    //   snap.forEach((item) => {
-    //     data.push(item.data())
-    //   })
-    //   storeAccessible.dispatch(setNotification(data))
-    // })
   }
 
   async authenticationChange (authUser) {
-    if (authUser) {
-      const result = await loading(async () => {
-        const user = await getUser(authUser)
-        // We need a password again for generate publicKey
-        if (user && !user.publicKey) {
-          // Maybe case without password login
-          // Modal.show(<PasswordModal />)
-          const { publicKey } = await updatePublicKey(user)
-          user.publicKey = publicKey
+    try {
+      if (authUser) {
+        const result = await loading(async () => {
+          const user = await getUser(authUser)
+          // We need a password again for generate publicKey
+          if (user && !user.publicKey) {
+            // Maybe case without password login
+            // Modal.show(<PasswordModal />)
+            const { publicKey } = await updatePublicKey(user)
+            user.publicKey = publicKey
+          } else if (user && !validateSessionKey(user)) {
+            throw new Error('INVALID_SESSION_KEY')
+          } else if (user) {
+            shouldGenerateApproveID(user)
+          }
+          await requestMessageToken(user)
+          return user
+        })
+        if (result/* && !this.emailLink */) {
+          this.notificationListener(authUser)
+          return storeAccessible.dispatch(setUserInformation(result))
         }
-        return user
-      })
-      if (result && !this.emailLink) {
-        this.notificationListener(authUser)
-        return storeAccessible.dispatch(setUserInformation(result))
-      } else if (result && this.emailLink) {
-        storeAccessible.dispatch(setUserInformation(result))
-        return setTimeout(() => {
-          window.location.replace('/')
-        }, 200)
-      } else if (!result && this.emailLink) {
-        if (this.userListener) {
-          this.userListener()
-        }
-        this.userListener = firebase.db
-          .collection('users')
-          .doc(`${authUser.uid}`)
-          .onSnapshot((item) => {
-            this.notificationListener(authUser)
-            storeAccessible.dispatch(setUserInformation(item.data()))
-            this.userListener()
-          })
-        return true
+        // else if (result && this.emailLink) {
+        //   storeAccessible.dispatch(setUserInformation(result))
+        //   return setTimeout(() => {
+        //     window.location.replace('/')
+        //   }, 200)
+        // } else if (!result && this.emailLink) {
+        //   if (this.userListener) {
+        //     this.userListener()
+        //   }
+        //   this.userListener = firebase.db
+        //     .collection('users')
+        //     .doc(`${authUser.uid}`)
+        //     .onSnapshot((item) => {
+        //       this.notificationListener(authUser)
+        //       storeAccessible.dispatch(setUserInformation(item.data()))
+        //       this.userListener()
+        //     })
+        //   return true
+        // }
+        signOut()
       }
+      // Logout clear all
+      if (this.notificationListenerInstance) {
+        this.notificationListenerInstance()
+      }
+      storeAccessible.dispatch(setUserInformation(null))
+    } catch (err) {
       signOut()
+      // Logout clear all
+      if (this.notificationListenerInstance) {
+        this.notificationListenerInstance()
+      }
+      storeAccessible.dispatch(setUserInformation(null))
     }
-    // Logout clear all
-    if (this.notificationListenerInstance) {
-      this.notificationListenerInstance()
-    }
-    storeAccessible.dispatch(setUserInformation(null))
   }
 
   render () {

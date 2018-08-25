@@ -40,3 +40,19 @@ export const sendMessage = async (user, room, data) => {
     return true
   })
 }
+
+export const readed = async room => {
+  try {
+    console.log('>>>>>>readed')
+    const readedFunc = firebase
+      .functions
+      .httpsCallable('readed')
+    const results = await readedFunc({
+      room
+    })
+    console.log('results', results)
+    return results
+  } catch (err) {
+    console.log('err', err)
+  }
+}

@@ -28,6 +28,7 @@ class SignUpForm extends Component {
       errors: {}
     }
     this.signup = this.signup.bind(this)
+    this.gotoLogin = this.gotoLogin.bind(this)
     this.signupEmail = this.signupEmail.bind(this)
     this.onChangeName = this.onChangeName.bind(this)
     this.onChangeEmail = this.onChangeEmail.bind(this)
@@ -51,6 +52,10 @@ class SignUpForm extends Component {
         ...errors
       }
     })
+  }
+
+  async gotoLogin () {
+    return replace('/login')
   }
 
   async signup () {
@@ -140,13 +145,21 @@ class SignUpForm extends Component {
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button
+                    {/* <Button
                       simple
                       color='primary'
                       size='lg'
                       onClick={this.signupEmail}
                     >
                       Without Password
+                    </Button> */}
+                    <Button
+                      simple
+                      color='primary'
+                      size='lg'
+                      onClick={this.gotoLogin}
+                    >
+                      Login
                     </Button>
                     <Button
                       simple

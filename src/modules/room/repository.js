@@ -1,18 +1,14 @@
 import firebaseApp from 'firebase/app'
 import firebase from '../../common/utils/firebase'
 
-export const createRoom = async (user, { uid, publicKey }, message = 'Chat me !') => {
+export const createRoom = async (data) => {
   const time = firebaseApp.firestore.FieldValue.serverTimestamp()
   const room = await firebase.db
     .collection(`rooms`)
     .add({
       time,
-      last: time,
-      guest: uid,
-      user: user.uid,
-      notification: 0,
-      guestPublic: publicKey,
-      userPublic: user.publicKey
+      latest: time,
+      ...data
     })
   return { room }
 }
@@ -29,16 +25,4 @@ export const createNotification = (friend, user, room, message) => {
       ref: room.uid,
       count: 1
     })
-}
-
-export const markReaded = async (room) => {
-  const time = firebaseApp.firestore.FieldValue.serverTimestamp()
-  const newRef = firebase.db.collection(`rooms`).doc(`${room.id}`)
-  return newRef.update({
-    last: time,
-    unread: 0
-  }).then(response => {
-    // return updateRooms(user, room, data.message)
-    return true
-  })
 }

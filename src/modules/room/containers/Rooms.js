@@ -15,7 +15,6 @@ function parseDocs (data) {
   const docs = []
   data.forEach(doc => {
     const item = doc.data()
-    console.log('item', item)
     docs.push({
       count: item.count,
       enable: item.enable,
@@ -64,7 +63,6 @@ const mapDispatchToProps = (dispatch, props) => ({
     const generator = ec.keyFromPrivate(needed)
     const publicRoom = ec.keyFromPublic(room.guestPublic, 'hex')
     const shared = generator.derive(publicRoom.getPublic())
-    console.log('guestPublic', shared, publicRoom)
     dispatch(setCurrentRoom({...room, shared: shared.toString(16)}))
     setTimeout(() => {
       next('/message')
@@ -73,7 +71,7 @@ const mapDispatchToProps = (dispatch, props) => ({
 })
 
 const mapStateToProps = state => ({
-  needed: state.common.needed,
+  approveID: state.common.approveID,
   user: state[MODULE_USER].userInformation,
   rooms: state[MODULE_ROOM].rooms,
   notifications: state[MODULE_USER].notifications

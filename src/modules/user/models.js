@@ -16,3 +16,9 @@ export const emailValidate = {
     email: true
   }
 }
+
+export const passwordValidate = {
+  'password': {
+    length: {minimum: 6}
+  }
+}

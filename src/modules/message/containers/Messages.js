@@ -5,7 +5,7 @@ import storeAccessible from '../../../common/utils/storeAccessible'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import Messages from '../components/Messages'
-import { getMessages } from '../repository'
+import { getMessages, readed } from '../repository'
 import { setMessages } from '../actions'
 
 let messageListener = null
@@ -58,6 +58,7 @@ const mapDispatchToProps = (dispatch, props) => ({
         })
         messageListener = instance
         const { docs, max } = parseDocs(data)
+        readed({ ...room, uid: room.id })
         dispatch(setMessages({
           key: room.id,
           data: docs,

@@ -3,7 +3,10 @@ import * as actions from '../actions/common'
 
 const defaultState = {
   language: 'en',
-  needed: null
+  sessionSecurity: null,
+  sessionKey: null,
+  approveID: null,
+  messageToken: null
 }
 
 const handlers = {
@@ -13,10 +16,28 @@ const handlers = {
       language: action.payload
     }
   },
-  [actions.setUserNeed]: (state, action) => {
+  [actions.setUserSessionKey]: (state, action) => {
     return {
       ...state,
-      needed: action.payload
+      sessionKey: action.payload
+    }
+  },
+  [actions.setUserSessionSecurity]: (state, action) => {
+    return {
+      ...state,
+      sessionSecurity: action.payload
+    }
+  },
+  [actions.setUserApproveID]: (state, action) => {
+    return {
+      ...state,
+      approveID: action.payload
+    }
+  },
+  [actions.setUserMessageToken]: (state, action) => {
+    return {
+      ...state,
+      messageToken: action.payload
     }
   }
 }

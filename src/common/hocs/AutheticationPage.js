@@ -4,8 +4,8 @@ import NoPage from './NoPage'
 
 class AutheticationPage extends Component {
   render () {
-    const { Page, user, ...props } = this.props
-    if (!user) {
+    const { Page, user, approveID, ...props } = this.props
+    if (!user || !approveID) {
       return (<NoPage />)
     }
     return (
@@ -15,7 +15,8 @@ class AutheticationPage extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user.userInformation
+  user: state.user.userInformation,
+  approveID: state.common.approveID
 })
 
 export default connect(mapStateToProps, null)(AutheticationPage)

@@ -30,19 +30,22 @@ const mapDispatchToProps = (dispatch, props) => ({
   makeFriend: async (user, friend, message = 'Chat with me ?') => {
     const result = await loading(async () => {
       try {
-        const result = await createRoom(user, friend, message)
+        const data = {
+          count: 0,
+          enable: true,
+          guest: friend.uid,
+          guestName: friend.email,
+          host: user.uid,
+          hostName: user.email,
+          message,
+          guestPublic: friend.publicKey,
+          userPublic: user.publicKey
+        }
+        const result = await createRoom(data)
         if (result && result.room) {
           const response = await addUserRooms(user, {
-            count: 0,
-            enable: true,
-            guest: friend.uid,
-            guestName: friend.email,
-            host: user.uid,
-            hostName: user.email,
-            id: result.room.id,
-            message,
-            guestPublic: friend.publicKey,
-            userPublic: user.publicKey
+            ...data,
+            id: result.room.id
           })
           response && dispatch(setFriend(null))
           return response || false

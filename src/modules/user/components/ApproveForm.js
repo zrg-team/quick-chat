@@ -3,9 +3,8 @@ import validate from 'validate.js'
 import withStyles from '@material-ui/core/styles/withStyles'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import LockOutlined from '@material-ui/icons/LockOutlined'
-import Email from '@material-ui/icons/Email'
 import { replace } from '../../../common/utils/navigation'
-import { signupValidate, emailValidate } from '../models'
+import { passwordValidate } from '../models'
 import Notification from '../../../common/components/widgets/Notification'
 // core components
 import GridContainer from '../../../libraries/Grid/GridContainer'
@@ -16,37 +15,31 @@ import CardBody from '../../../libraries/Card/CardBody'
 import CardFooter from '../../../libraries/Card/CardFooter'
 import Button from '../../../libraries/CustomButtons/Button'
 import CustomInput from '../../../libraries/CustomInput/CustomInput'
-import IconButton from '../../../libraries/CustomButtons/IconButton'
 
 import loginStyle from '../../../assets/jss/material-kit-react/views/componentsSections/loginStyle'
 
-class LoginForm extends Component {
+class ApproveForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      name: '',
-      email: '',
       password: '',
       errors: {}
     }
-    this.login = this.login.bind(this)
-    this.signup = this.signup.bind(this)
-    this.loginEmail = this.loginEmail.bind(this)
-    this.onChangeEmail = this.onChangeEmail.bind(this)
+    this.unlock = this.unlock.bind(this)
     this.onChangePassword = this.onChangePassword.bind(this)
   }
 
-  async login () {
-    const { email, password } = this.state
-    const { login } = this.props
-    const errors = validate({ email, password }, signupValidate)
+  async unlock () {
+    const { password } = this.state
+    const { unlock } = this.props
+    const errors = validate({ password }, passwordValidate)
     if (!errors) {
-      const result = await login(email, password)
-      if (result && result.success) {
-        Notification.show('Login success !', 'success')
+      const result = await unlock(password)
+      if (result) {
+        Notification.show('Welcome back !', 'success')
         return replace('/room')
       }
-      return Notification.show(result.message, 'error')
+      return Notification.show('Unlock error !', 'error')
     }
     this.setState({
       errors: {
@@ -55,35 +48,10 @@ class LoginForm extends Component {
     })
   }
 
-  signup () {
-    return replace('/signup')
-  }
-
-  onChangeEmail (event) {
-    this.setState({
-      email: event.target.value
-    })
-  }
-
   onChangePassword (event) {
     this.setState({
       password: event.target.value
     })
-  }
-
-  async loginEmail () {
-    const { loginEmail } = this.props
-    const email = window.prompt('Please provide your email for login')
-    const errors = validate({ email }, emailValidate)
-    if (!errors) {
-      const result = await loginEmail(email)
-      if (result && result.success) {
-        Notification.show(`Please check ${email} for login email !`, 'success')
-        return replace('/login')
-      }
-      return Notification.show(result.message, 'error')
-    }
-    Notification.show(Object.keys(errors).map(key => errors[key][0]).join(', '), 'error')
   }
 
   render () {
@@ -97,34 +65,9 @@ class LoginForm extends Component {
               <Card>
                 <form className={classes.form}>
                   <CardHeader color='primary' className={classes.cardHeader}>
-                    <h4>Login</h4>
-                    {/* <div className={classes.socialLine}>
-                      <IconButton
-                        color='transparent'
-                        onClick={this.loginEmail}
-                      >
-                        <Email titleAccess={'Email'} />
-                      </IconButton>
-                    </div> */}
+                    <h4>Unlock</h4>
                   </CardHeader>
                   <CardBody>
-                    <CustomInput
-                      labelText='Email'
-                      id='email'
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                      error={errors.email !== undefined}
-                      inputProps={{
-                        type: 'email',
-                        endAdornment: (
-                          <InputAdornment position='end'>
-                            <Email className={classes.inputIconsColor} />
-                          </InputAdornment>
-                        ),
-                        onChange: this.onChangeEmail
-                      }}
-                    />
                     <CustomInput
                       labelText='Password'
                       id='pass'
@@ -148,17 +91,9 @@ class LoginForm extends Component {
                       simple
                       color='primary'
                       size='lg'
-                      onClick={this.signup}
+                      onClick={this.unlock}
                     >
-                      Signup
-                    </Button>
-                    <Button
-                      simple
-                      color='primary'
-                      size='lg'
-                      onClick={this.login}
-                    >
-                      Login
+                      Unlock
                     </Button>
                   </CardFooter>
                 </form>
@@ -171,4 +106,4 @@ class LoginForm extends Component {
   }
 }
 
-export default withStyles(loginStyle)(LoginForm)
+export default withStyles(loginStyle)(ApproveForm)

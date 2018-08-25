@@ -8,3 +8,5 @@ export const loadStart = createAction('loading_start')
 export const loadEnd = createAction('loading_end')
 
 export const authetication = createAction('authetication')
+
+export const setUserApproveHash = createAction(`SET_USER_APPROVE_HASH`)

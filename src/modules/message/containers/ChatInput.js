@@ -4,7 +4,6 @@ import { cryptMe } from '../../../common/utils/cryptography'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import { sendMessage } from '../repository'
-import { markReaded } from '../../room/repository'
 
 const mapDispatchToProps = (dispatch, props) => ({
   send: async (user, selected, {
@@ -16,13 +15,6 @@ const mapDispatchToProps = (dispatch, props) => ({
         from: user.uid,
         type
       })
-    } catch (err) {
-      console.log('send err', err)
-    }
-  },
-  markReaded: async (room) => {
-    try {
-      await markReaded(room)
     } catch (err) {
       console.log('send err', err)
     }
