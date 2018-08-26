@@ -13,11 +13,11 @@ firebase.initializeApp({
     messagingSenderId: '447867740573'
 }); //These are example configuration value
 
-const messaging = firebase.messaging();
+var messaging = firebase.messaging();
 
 messaging.setBackgroundMessageHandler(function (payload) {
-  const notificationTitle = payload.data.title;
-  const notificationOptions = {
+  var notificationTitle = payload.data.title;
+  var notificationOptions = {
     body: payload.data.body,
     icon: payload.data.icon
   };
