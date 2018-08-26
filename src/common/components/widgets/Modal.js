@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Card from '@material-ui/core/Card'
+// import Card from '@material-ui/core/Card'
 import Modal from '@material-ui/core/Modal'
 import { withStyles } from '@material-ui/core/styles'
 
@@ -17,6 +17,7 @@ class ModalComponent extends Component {
   }
 
   activateModal (component) {
+    console.log('ModalWithStyle')
     this.setState({
       isShow: true,
       component
@@ -37,22 +38,22 @@ class ModalComponent extends Component {
     return document.getElementById('application')
   }
 
-  componentWillMount () {
+  componentDidMount () {
     const { global } = this.props
     if (global) {
-      Modal.instance = this
+      ModalWithStyle.instance = this
     }
   }
 
   componentWillUnmount () {
     const { global } = this.props
     if (global) {
-      delete Modal.instance
+      delete ModalWithStyle.instance
     }
   }
 
   render () {
-    const { classes } = this.props
+    // const { classes } = this.props
     const { isShow, component } = this.state
 
     return (
@@ -62,9 +63,7 @@ class ModalComponent extends Component {
         open={isShow}
         onClose={this.deactivateModal}
       >
-        <Card className={classes.card}>
-          {component}
-        </Card>
+        {component}
       </Modal>
     )
   }
@@ -81,6 +80,7 @@ const ModalWithStyle = withStyles(styles)(ModalComponent)
 export default {
   Component: ModalWithStyle,
   show (component) {
+    console.log('ModalWithStyle', ModalWithStyle.instance)
     ModalWithStyle.instance && ModalWithStyle.instance.activateModal(component)
   },
   hide () {

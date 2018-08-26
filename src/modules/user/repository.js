@@ -74,17 +74,20 @@ export const updateUserRooms = async (user, room, message) => {
 }
 
 export const addUserRooms = async (user, data) => {
-  if (!user) {
+  if (!user || !data.id) {
     return undefined
   }
-  const time = firebaseApp.firestore.FieldValue.serverTimestamp()
+  const time = firebaseApp.firestore.Timestamp.now()
   return firebase.db
     .collection('users')
     .doc(`${user.uid}`)
     .collection('rooms')
-    .add({
+    .doc(`${data.id}`)
+    .set({
       ...data,
-      time
+      time: time.toMillis()
+    }).then(() => {
+      return true
     })
 }
 

@@ -38,6 +38,7 @@ export const signOut = () => {
   storeAccessible.dispatch(setUserApproveID(null))
   storeAccessible.dispatch(setUserSessionSecurity(null))
   storeAccessible.dispatch(setUserSessionKey(null))
+  storeAccessible.clearPersistStore()
 }
 
 export function authenticationEmail (email) {

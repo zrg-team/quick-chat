@@ -8,6 +8,32 @@ class Messages extends Component {
     super(props)
     this.state = {
     }
+    this.listRef = null
+    this.shouldScroll = false
+    this.assignRef = this.assignRef.bind(this)
+  }
+
+  assignRef (ref) {
+    this.listRef = ref
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const { offset, refContainer } = this.props
+    const { offset: nextOffset, refContainer: nextRefContainer } = nextProps
+    if (offset !== nextOffset && nextOffset > offset && nextRefContainer && this.listRef) {
+      this.shouldScroll = true
+    }
+    if (!refContainer && nextRefContainer) {
+      this.shouldScroll = true
+    }
+  }
+
+  componentDidUpdate () {
+    if (this.shouldScroll) {
+      const { refContainer } = this.props
+      this.shouldScroll = false
+      refContainer.scrollTop = this.listRef.scrollHeight + 100
+    }
   }
 
   async componentDidMount () {
@@ -23,26 +49,15 @@ class Messages extends Component {
   }
 
   render () {
-    const { messages = [], user, selected } = this.props
+    const { messages = [] } = this.props
     return (
       <div>
         <MessageList
+          cmpRef={this.assignRef}
           className='message-list'
-          lockable
+          lockable={false}
           toBottomHeight={'80%'}
-          dataSource={messages.map(item => {
-            const sender = user.uid === item.from
-            const type = ['text', 'url'].includes(item.type) ? 'text' : item.type
-            return {
-              title: sender ? undefined : selected.guestName,
-              position: sender ? 'right' : 'left',
-              type: type,
-              text: item.type !== 'url'
-                ? <p>{item.data}</p>
-                : <a target='_blank' href={item.data}>{item.data}</a>,
-              date: new Date(item.time * 1000)
-            }
-          })}
+          dataSource={messages}
         />
       </div>
     )

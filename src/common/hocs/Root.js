@@ -13,6 +13,7 @@ import {
 } from '../utils/authentication'
 import { getUser } from '../../modules/user/repository'
 import { requestMessageToken } from '../utils/notifications'
+import Notification from '../components/widgets/Notification'
 import { setUserInformation, setNotification } from '../../modules/user/actions'
 import MainPage from './MainPage'
 
@@ -21,6 +22,7 @@ export default class Root extends Component {
     super(props)
 
     this.emailLink = false
+    this.firstNotificationSync = true
     this.userListenerInstance = null
     this.notificationListenerInstance = null
     this.userListener = this.userListener.bind(this)
@@ -86,15 +88,20 @@ export default class Root extends Component {
       .collection('messages')
       .where('enable', '==', true)
       .orderBy('time', 'desc')
-      .limit(5)
+      .limit(100)
       .onSnapshot((snap) => {
         const data = []
-        snap.docs.forEach((item) => {
+        snap.docs.forEach((ref) => {
+          const item = ref.data()
           data.push({
-            uid: item.id,
-            ...item.data()
+            uid: ref.id,
+            ...item
           })
+          if (!this.firstNotificationSync) {
+            Notification.info(`${item.fromEmail}: ${item.message}`)
+          }
         })
+        this.firstNotificationSync = false
         storeAccessible.dispatch(setNotification(data))
       })
   }
@@ -111,11 +118,12 @@ export default class Root extends Component {
             const { publicKey } = await updatePublicKey(user)
             user.publicKey = publicKey
           } else if (user && !validateSessionKey(user)) {
+            Notification.error('Your session key invalid. Maybe someone login to your account, please check !')
             throw new Error('INVALID_SESSION_KEY')
           } else if (user) {
             shouldGenerateApproveID(user)
           }
-          await requestMessageToken(user)
+          requestMessageToken(user)
           return user
         })
         if (result/* && !this.emailLink */) {

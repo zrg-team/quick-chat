@@ -3,7 +3,7 @@ import ChatInput from '../components/ChatInput'
 import { cryptMe } from '../../../common/utils/cryptography'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
-import { sendMessage } from '../repository'
+import { sendMessage, buzzMessage } from '../repository'
 
 const mapDispatchToProps = (dispatch, props) => ({
   send: async (user, selected, {
@@ -18,15 +18,20 @@ const mapDispatchToProps = (dispatch, props) => ({
     } catch (err) {
       console.log('send err', err)
     }
+  },
+  buzz: (user, selected, unread) => {
+    return buzzMessage(user, selected, unread)
   }
 })
 
 const mapStateToProps = state => {
   const selected = state[MODULE_MESSAGE].selected
+  const stage = state[MODULE_MESSAGE].stage[selected.id]
   return {
     selected,
     user: state[MODULE_USER].userInformation,
-    room: state[MODULE_MESSAGE].selected
+    room: state[MODULE_MESSAGE].selected,
+    unread: (stage && stage.unread) || 0
   }
 }
 

@@ -3,31 +3,30 @@ import * as actions from './actions'
 
 const defaultState = {
   selected: null,
-  history: {},
-  stage: {}
+  stage: {},
+  messages: {}
 }
 
 const handlers = {
   [actions.setMessages]: (state, action) => ({
     ...state,
-    [action.payload.key]: [
-      ...state[action.payload.key] ? state[action.payload.key] : [],
-      ...action.payload.data
-    ],
+    messages: {
+      ...state.messages,
+      [action.payload.key]: [
+        ...state.messages[action.payload.key] ? state.messages[action.payload.key] : [],
+        ...action.payload.data
+      ]
+    },
     stage: {
       ...state.stage,
       [action.payload.key]: {
+        unread: action.payload.isReaded
+          ? action.payload.isReaded || 0
+          : 0,
         offset: action.payload.offset
           ? action.payload.offset
           : state.stage[action.payload.key].offset
       }
-    },
-    history: {
-      ...state.history,
-      [action.payload.key]: [
-        ...state.history[action.payload.key] ? state.history[action.payload.key] : [],
-        ...action.payload.data
-      ]
     }
   }),
   [actions.setCurrentRoom]: (state, action) => ({

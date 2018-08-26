@@ -2,12 +2,12 @@ import firebaseApp from 'firebase/app'
 import firebase from '../../common/utils/firebase'
 
 export const createRoom = async (data) => {
-  const time = firebaseApp.firestore.FieldValue.serverTimestamp()
+  const time = firebaseApp.firestore.Timestamp.now()
   const room = await firebase.db
     .collection(`rooms`)
     .add({
-      time,
-      latest: time,
+      time: time.toMillis(),
+      latest: time.toMillis(),
       ...data
     })
   return { room }

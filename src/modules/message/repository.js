@@ -10,7 +10,7 @@ export const getMessages = async (room, offset, listener = undefined) => {
   let instance = null
   const ref = firebase.db
     .collection(`rooms/${room.id}/messages`)
-    .where('time', '>', new Date(offset * 1000))
+    .where('time', '>', offset)
     .limit(LIMIT_MESSAGE)
   if (listener) {
     instance = ref.onSnapshot((data) => {
@@ -30,11 +30,11 @@ export const getMessages = async (room, offset, listener = undefined) => {
 }
 
 export const sendMessage = async (user, room, data) => {
-  const time = firebaseApp.firestore.FieldValue.serverTimestamp()
+  const time = firebaseApp.firestore.Timestamp.now()
   const newRef = firebase.db.collection(`rooms/${room.id}/messages`).doc()
   return newRef.set({
     ...data,
-    time
+    time: time.toMillis()
   }).then(response => {
     // return updateRooms(user, room, data.message)
     return true
@@ -43,7 +43,6 @@ export const sendMessage = async (user, room, data) => {
 
 export const readed = async room => {
   try {
-    console.log('>>>>>>readed')
     const readedFunc = firebase
       .functions
       .httpsCallable('readed')
@@ -54,5 +53,22 @@ export const readed = async room => {
     return results
   } catch (err) {
     console.log('err', err)
+  }
+}
+
+export const buzzMessage = async (user, room, unread = 1) => {
+  try {
+    const buzzFunc = firebase
+      .functions
+      .httpsCallable('buzz')
+    const results = await buzzFunc({
+      room: room.id,
+      count: unread
+    })
+    console.log('buzzMessage', results)
+    return true
+  } catch (err) {
+    console.log('err', err)
+    return false
   }
 }

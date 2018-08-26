@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Menu, Notifications, Message } from '@material-ui/icons'
+import { Menu, Notifications, Message, People } from '@material-ui/icons'
 import {
   withStyles,
   AppBar,
@@ -26,14 +26,14 @@ class NotificationHeader extends React.Component {
   }
   handleOpenNotification () {
     const { openNotification } = this.state
-    const { clearNotification, notifications, user } = this.props
+    // const { clearNotification, notifications, user } = this.props
     this.setState({
       openNotification: !openNotification
     })
-    if (!openNotification === false && notifications.length) {
-      console.log('user', user, notifications)
-      clearNotification(user, notifications)
-    }
+    // if (!openNotification === false && notifications.length) {
+    //   console.log('user', user, notifications)
+    //   clearNotification(user, notifications)
+    // }
   }
   render () {
     const { openNotification } = this.state
@@ -47,13 +47,18 @@ class NotificationHeader extends React.Component {
           <div className={classes.flex} />
           {openNotification && <Paper className={classes.root}>
             {notifications.map(data => {
+              const type = data.type === 'message'
               return (
                 <Chip
-                  key={data.ref}
-                  color='primary'
-                  label={data.message}
+                  key={`${data.ref}_${data.time.seconds}`}
+                  color={type ? 'primary' : 'secondary'}
+                  label={`${data.fromEmail}: ${data.message}`}
                   className={classes.chip}
-                  avatar={<Avatar><Message /></Avatar>}
+                  avatar={
+                    <Avatar>
+                      {type
+                      ? <Message /> : <People />}
+                    </Avatar>}
                 />
               )
             })}

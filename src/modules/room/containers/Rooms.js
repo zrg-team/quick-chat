@@ -23,7 +23,7 @@ function parseDocs (data) {
       message: item.message,
       host: item.host,
       id: item.id,
-      latest: item.latest,
+      lasted: item.lasted && item.lasted.seconds,
       uid: doc.id,
       guestPublic: item.guestPublic,
       userPublic: item.userPublic

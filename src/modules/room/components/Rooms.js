@@ -41,8 +41,8 @@ class Rooms extends Component {
                 alt: 'Reactjs',
                 title: item.guestName,
                 subtitle: item.message,
-                date: new Date(item.last && item.last.seconds),
-                unread: item.unread || 0,
+                date: item.lasted ? new Date(item.lasted) : undefined,
+                unread: item.count || 0,
                 ...item
               }
             })} />

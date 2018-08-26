@@ -25,6 +25,11 @@ class StoreAccessible {
     const { store } = composeStore
     return store.dispatch
   }
+
+  clearPersistStore () {
+    const { persistor } = composeStore
+    persistor.flush()
+  }
 }
 
 export default new StoreAccessible()
