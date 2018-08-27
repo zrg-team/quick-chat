@@ -14,3 +14,5 @@ export const ACTION_CODE_SETTING = {
 }
 
 export const TIMEOUT = 12000
+
+export const GOOGLE_API_KEY = 'AIzaSyCAQuBBJQNTGF3mMDGC1IX7Kkf-5Szop18'

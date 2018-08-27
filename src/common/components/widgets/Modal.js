@@ -17,7 +17,6 @@ class ModalComponent extends Component {
   }
 
   activateModal (component) {
-    console.log('ModalWithStyle')
     this.setState({
       isShow: true,
       component
@@ -80,7 +79,6 @@ const ModalWithStyle = withStyles(styles)(ModalComponent)
 export default {
   Component: ModalWithStyle,
   show (component) {
-    console.log('ModalWithStyle', ModalWithStyle.instance)
     ModalWithStyle.instance && ModalWithStyle.instance.activateModal(component)
   },
   hide () {

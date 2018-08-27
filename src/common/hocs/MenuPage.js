@@ -13,7 +13,7 @@ import { replace } from '../utils/navigation'
 import Sidebar from '../components/elements/Sidebar'
 import NotificationHeader from '../../modules/user/containers/NotificationHeader'
 import appStyle from '../styles/app'
-import logo from '../../assets/img/sign.jpg'
+import logo from '../../assets/images/chat-icon.png'
 
 const SIDDE_BARS = [
   {

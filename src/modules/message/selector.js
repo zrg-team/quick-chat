@@ -1,5 +1,7 @@
 import React from 'react'
+import YouTube from 'react-youtube'
 import { createSelector } from 'reselect'
+import { GOOGLE_API_KEY } from '../../common/models'
 import { MODULE_NAME as MODULE_MESSAGE } from './models'
 import { getMe } from '../../common/utils/cryptography'
 const ReactMarkdown = require('react-markdown')
@@ -18,9 +20,10 @@ export const selectorMessages = createSelector(
     }
     return messages.map((item) => {
       try {
-        const type = ['text', 'url', 'markdown'].includes(item.type) ? 'text' : item.type
+        const type = ['text', 'url', 'markdown', 'youtube'].includes(item.type) ? 'text' : item.type
         const data = getMe(item.data, room.shared)
         let text = ''
+        let uri = null
         let objectData = {}
         switch (item.type) {
           case 'url':
@@ -32,6 +35,20 @@ export const selectorMessages = createSelector(
           case 'location':
             objectData = JSON.parse(data)
             break
+          case 'youtube':
+            text = <YouTube
+              videoId={`${data}`}
+              opts={{
+                width: '400',
+                playerVars: {
+                  autoplay: 0
+                }
+              }}
+            />
+            break
+          case 'spotify':
+            uri = data
+            break
           case 'markdown':
             text = <ReactMarkdown source={data} />
             break
@@ -41,8 +58,10 @@ export const selectorMessages = createSelector(
           position: item.sender ? 'right' : 'left',
           type: type,
           text,
+          uri,
           data: objectData,
-          apiKey: 'AIzaSyCAQuBBJQNTGF3mMDGC1IX7Kkf-5Szop18',
+          apiKey: GOOGLE_API_KEY,
+          className: 'message-box-container',
           date: new Date(item.time)
         }
       } catch (err) {

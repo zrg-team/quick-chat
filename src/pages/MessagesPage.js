@@ -2,6 +2,7 @@ import React from 'react'
 import {
   withStyles
 } from '@material-ui/core'
+import 'emoji-mart/css/emoji-mart.css'
 import MenuPage from '../common/hocs/MenuPage'
 import Messages from '../modules/message/containers/Messages'
 import ChatInput from '../modules/message/containers/ChatInput'
