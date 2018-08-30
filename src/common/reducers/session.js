@@ -71,6 +71,12 @@ const handlers = {
         ]
       }
     }
+  },
+  [actions.setUserApproveID]: (state, action) => {
+    return {
+      ...state,
+      approveID: action.payload
+    }
   }
 }
 

@@ -26,7 +26,7 @@
 	background-color: #BBBBBB;
 }
 
-.rce-mbox {
+/* .rce-mbox {
   max-width: calc(100% - 40px);
   overflow-x: auto;
   position: relative;
@@ -44,4 +44,4 @@
   padding: 6px 9px 8px 9px;
   float: left;
   min-width: 140px;
-}
+} */

@@ -16,7 +16,7 @@ class AutheticationPage extends Component {
 
 const mapStateToProps = state => ({
   user: state.user.userInformation,
-  approveID: state.common.approveID
+  approveID: state.session.approveID
 })
 
 export default connect(mapStateToProps, null)(AutheticationPage)

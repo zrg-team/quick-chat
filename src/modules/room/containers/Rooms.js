@@ -29,7 +29,7 @@ function parseDocs (data) {
       userPublic: item.userPublic
     })
   })
-  return docs
+  return docs.sort((next, pre) => pre.lasted - next.lasted)
 }
 const mapDispatchToProps = (dispatch, props) => ({
   getRooms: async (user) => {
@@ -71,7 +71,7 @@ const mapDispatchToProps = (dispatch, props) => ({
 })
 
 const mapStateToProps = state => ({
-  approveID: state.common.approveID,
+  approveID: state.session.approveID,
   user: state[MODULE_USER].userInformation,
   rooms: state[MODULE_ROOM].rooms,
   notifications: state[MODULE_USER].notifications

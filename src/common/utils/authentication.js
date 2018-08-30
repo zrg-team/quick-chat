@@ -1,11 +1,12 @@
 import store from 'store'
 import sha512 from 'crypto-js/sha512'
+import sha256 from 'crypto-js/sha256'
 import firebase from './firebase'
 import { ACTION_CODE_SETTING } from '../models'
 import { cryptMe, getMe } from './cryptography'
 import storeAccessible from './storeAccessible'
-import { setUserApproveHash } from '../actions/session'
-import { setUserApproveID, setUserSessionSecurity, setUserSessionKey } from '../actions/common'
+import { setUserApproveHash, setUserApproveID } from '../actions/session'
+import { setUserSessionSecurity, setUserSessionKey } from '../actions/common'
 import { setUserPublicKey } from '../../modules/user/repository'
 
 const EC = require('elliptic').ec
@@ -21,14 +22,15 @@ export const createUserByEmail = async (email, iHere) => {
 
 export const signInByEmail = async (email, proveMe) => {
   try {
-    const proveMeHash = sha512(proveMe).toString()
+    const proveMeHash = sha256(proveMe).toString()
     storeAccessible.dispatch(setUserApproveHash(proveMeHash))
     const result = await firebase.auth.signInWithEmailAndPassword(email, proveMe)
     if (firebase.auth.currentUser && firebase.auth.currentUser.emailVerified) {
       return result
     }
-    return false
+    throw new Error('LOGIN_FAIL')
   } catch (err) {
+    console.log('signInByEmail', err)
     return false
   }
 }
@@ -49,25 +51,26 @@ export function authenticationEmail (email) {
     })
 }
 
-export async function updatePublicKey (user) {
+export async function updatePublicKey (user, authentication) {
   const state = storeAccessible.getState()
   const approveHash = state.session.approveHash
   // FIXME: hashed on client or server
   const generateSessionID = firebase
     .functions
     .httpsCallable('generateSessionID')
-  const approveRequest = await generateSessionID({
-    clientSession: approveHash
-  })
+  const approveRequest = await generateSessionID()
   const { data } = approveRequest
-  storeAccessible.dispatch(setUserApproveID(data.approveID))
-  storeAccessible.dispatch(setUserSessionSecurity(cryptMe(data.approveID, approveHash)))
-  storeAccessible.dispatch(setUserSessionKey(data.sessionKey))
   if (!data.approveID || !`${data.approveID}`.trim()) {
     throw new Error('MISSING_APPROVE_ID')
   }
+  const loginTime = new Date(firebase.auth.currentUser.metadata.lastSignInTime).getTime()
+  // CLIENT GENERATE
+  const approveID = sha512(`${data.approveID}.${approveHash}`)
+  storeAccessible.dispatch(setUserApproveID(approveID))
+  storeAccessible.dispatch(setUserSessionSecurity(cryptMe(approveID, `${loginTime}`)))
+  storeAccessible.dispatch(setUserSessionKey(data.sessionKey))
   const ec = new EC('curve25519')
-  const key = ec.keyFromPrivate(data.approveID)
+  const key = ec.keyFromPrivate(approveID)
   const publicKey = key.getPublic(false, 'hex')
   storeAccessible.dispatch(setUserApproveHash(null))
   return setUserPublicKey(user, publicKey)
@@ -79,22 +82,24 @@ export function validateSessionKey (user) {
   return !user.sessionKey || !sessionKey || user.sessionKey === sessionKey
 }
 
-export async function shouldGenerateApproveID (user) {
+export async function shouldGenerateApproveID (user, authentication) {
   const state = storeAccessible.getState()
-  const approveID = state.common.approveID
-  if (approveID) {
+  const approveID = state.session.approveID
+  const sessionSecurity = state.common.sessionSecurity
+  if (approveID || sessionSecurity) {
     return false
   }
+  const loginTime = new Date(firebase.auth.currentUser.metadata.lastSignInTime).getTime()
   const approveHash = state.session.approveHash
   const generateSessionID = firebase
     .functions
     .httpsCallable('generateSessionID')
-  const approveRequest = await generateSessionID({
-    clientSession: approveHash
-  })
+  const approveRequest = await generateSessionID()
   const { data } = approveRequest
-  storeAccessible.dispatch(setUserApproveID(data.approveID))
-  storeAccessible.dispatch(setUserSessionSecurity(cryptMe(data.approveID, approveHash)))
+  const newApproveID = sha512(`${data.approveID}.${approveHash}`)
+  const newSessionSecurity = cryptMe(newApproveID, `${loginTime}`)
+  storeAccessible.dispatch(setUserApproveID(newApproveID))
+  storeAccessible.dispatch(setUserSessionSecurity(newSessionSecurity))
   storeAccessible.dispatch(setUserSessionKey(data.sessionKey))
   return true
 }
@@ -116,4 +121,24 @@ export function validateSessionSecurity (proveMe) {
   } catch (err) {
     return false
   }
+}
+
+export function shouldUnlock () {
+  const state = storeAccessible.getState()
+  const sessionSecurity = state.common.sessionSecurity
+  const approveID = state.session.approveID
+  if (approveID) {
+    return true
+  }
+  const auth = firebase.auth.currentUser
+  if (!auth) {
+    throw new Error('AUTHENTICATION_FAIL_MISSING')
+  }
+  const loginTime = new Date(auth.metadata.lastSignInTime).getTime()
+  const key = getMe(sessionSecurity, `${loginTime}`)
+  if (!key) {
+    throw new Error('AUTHENTICATION_KEY')
+  }
+  storeAccessible.dispatch(setUserApproveID(key))
+  return key
 }

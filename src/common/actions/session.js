@@ -12,3 +12,4 @@ export const authetication = createAction('AUTHENTICATION')
 export const setUserApproveHash = createAction(`SET_USER_APPROVE_HASH`)
 
 export const setSessionMessages = createAction(`SET_SESSION_MESSAGE`)
+export const setUserApproveID = createAction(`SET_USER_APPROVE_ID`)

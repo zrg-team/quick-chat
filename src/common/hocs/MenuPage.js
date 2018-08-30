@@ -3,6 +3,7 @@ import {
   withStyles
 } from '@material-ui/core'
 import {
+  Public,
   Dashboard,
   ExitToApp,
   PeopleTwoTone
@@ -17,6 +18,12 @@ import logo from '../../assets/images/chat-icon.png'
 
 const SIDDE_BARS = [
   {
+    path: '/public',
+    sidebarName: 'Public',
+    navbarName: 'Material Public',
+    icon: Public
+  },
+  {
     path: '/room',
     sidebarName: 'Messages',
     navbarName: 'Material Dashboard',
@@ -25,7 +32,7 @@ const SIDDE_BARS = [
   {
     path: '/friend',
     sidebarName: 'Friend',
-    navbarName: 'Material Dashboard',
+    navbarName: 'Material PeopleTwoTone',
     icon: PeopleTwoTone
   },
   {
@@ -34,7 +41,7 @@ const SIDDE_BARS = [
       return replace('/login')
     },
     sidebarName: 'Signout',
-    navbarName: 'Material Dashboard',
+    navbarName: 'Material ExitToApp',
     icon: ExitToApp
   }
 ]

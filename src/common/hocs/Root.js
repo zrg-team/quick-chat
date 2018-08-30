@@ -7,6 +7,7 @@ import { loading } from '../middlewares/effects'
 import storeAccessible from '../utils/storeAccessible'
 import {
   signOut,
+  shouldUnlock,
   updatePublicKey,
   validateSessionKey,
   shouldGenerateApproveID
@@ -121,7 +122,9 @@ export default class Root extends Component {
             Notification.error('Your session key invalid. Maybe someone login to your account, please check !')
             throw new Error('INVALID_SESSION_KEY')
           } else if (user) {
-            shouldGenerateApproveID(user)
+            shouldGenerateApproveID(user).then(() => {
+              shouldUnlock()
+            })
           }
           requestMessageToken(user)
           return user
@@ -157,6 +160,7 @@ export default class Root extends Component {
       }
       storeAccessible.dispatch(setUserInformation(null))
     } catch (err) {
+      console.log('err', err)
       signOut()
       // Logout clear all
       if (this.notificationListenerInstance) {

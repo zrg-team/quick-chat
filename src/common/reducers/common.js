@@ -28,12 +28,6 @@ const handlers = {
       sessionSecurity: action.payload
     }
   },
-  [actions.setUserApproveID]: (state, action) => {
-    return {
-      ...state,
-      approveID: action.payload
-    }
-  },
   [actions.setUserMessageToken]: (state, action) => {
     return {
       ...state,
