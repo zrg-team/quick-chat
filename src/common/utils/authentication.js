@@ -65,7 +65,7 @@ export async function updatePublicKey (user, authentication) {
   }
   const loginTime = new Date(firebase.auth.currentUser.metadata.lastSignInTime).getTime()
   // CLIENT GENERATE
-  const approveID = sha512(`${data.approveID}.${approveHash}`)
+  const approveID = sha512(`${data.approveID}.${approveHash}`).toString()
   storeAccessible.dispatch(setUserApproveID(approveID))
   storeAccessible.dispatch(setUserSessionSecurity(cryptMe(approveID, `${loginTime}`)))
   storeAccessible.dispatch(setUserSessionKey(data.sessionKey))
@@ -96,7 +96,7 @@ export async function shouldGenerateApproveID (user, authentication) {
     .httpsCallable('generateSessionID')
   const approveRequest = await generateSessionID()
   const { data } = approveRequest
-  const newApproveID = sha512(`${data.approveID}.${approveHash}`)
+  const newApproveID = sha512(`${data.approveID}.${approveHash}`).toString()
   const newSessionSecurity = cryptMe(newApproveID, `${loginTime}`)
   storeAccessible.dispatch(setUserApproveID(newApproveID))
   storeAccessible.dispatch(setUserSessionSecurity(newSessionSecurity))
