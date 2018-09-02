@@ -72,7 +72,7 @@ class Map extends Component {
     // })
   }
   render () {
-    const { location, locations, directions } = this.props
+    const { user, location, locations, directions } = this.props
     if (!location) {
       return null
     }
@@ -88,17 +88,20 @@ class Map extends Component {
           position={location}
         />
         {locations && locations.map((data, index) => {
+          if (user.uid === data.ui) {
+            return null
+          }
           return (
             <MarkerWithLabel
               icon={{
                 url: userPin,
-                scaledSize: new window.google.maps.Size(31, 43)
+                scaledSize: new window.google.maps.Size(39, 43)
               }}
-              key={`${index}_${data.user.uid}`}
+              key={`${index}_${data.uid}`}
               position={data.location}
               labelVisible
               animation={window.google.maps.Animation.DROP}
-              labelAnchor={new window.google.maps.Point(31, 43)}
+              labelAnchor={new window.google.maps.Point(31, 65)}
               labelStyle={{
                 backgroundColor: '#4b86b4',
                 fontSize: '10px',

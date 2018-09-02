@@ -6,7 +6,7 @@ const ipfsOptions = {
   EXPERIMENTAL: {
     pubsub: true
   },
-  repo: '/orbitdb/chatme/browser/ipfs/0.9.2',
+  repo: '/orbitdb/chatme/browser/ipfs/0.9.3',
   start: true,
   config: {
     Addresses: {
@@ -41,7 +41,7 @@ export async function initPeer () {
       try {
         const orbitdb = new OrbitDB(ipfs)
         // // Create / Open a database
-        const db = await orbitdb.open('chatme.users.locations.0.1.0', {
+        const db = await orbitdb.open('chatme.users.locations.docstore.0.1.0', {
           // If database doesn't exist, create it
           sync: true,
           create: true,
@@ -49,10 +49,11 @@ export async function initPeer () {
           // Load only the local version of the database,
           // don't load the latest from the network yet
           localOnly: false,
-          type: 'feed',
+          type: 'docstore',
           // If "Public" flag is set, allow anyone to write to the database,
           // otherwise only the creator of the database can write
-          write: ['*']
+          write: ['*'],
+          indexBy: 'uid'
         })
         timeout = setTimeout(() => {
           console.log('PEER_DATABASE_TIMEOUT')

@@ -19,7 +19,7 @@ const mapDispatchToProps = (dispatch, props) => ({
   },
   watchLocations: () => {
     watchLocations(({ data }) => {
-      dispatch(setLocations(data.map((e) => e.payload.value)))
+      dispatch(setLocations(data))
     })
   }
 })

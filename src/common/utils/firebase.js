@@ -13,7 +13,6 @@ const settings = {
 firebase.initializeApp(FIREBASE_CONFIG)
 
 const messaging = firebase.messaging()
-
 const firestore = firebase.firestore()
 const functions = firebase.functions()
 const realtime = firebase.database()

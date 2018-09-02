@@ -5,10 +5,14 @@ export const updateLocation = async (user, location, lastHash) => {
     return false
   }
   const time = new Date().toISOString()
-  if (lastHash) {
-    await peerInstance.remove(lastHash)
+  if (user.uid) {
+    await peerInstance.del(user.uid).catch((err) => {
+      console.log('delete', err)
+    })
   }
-  const hash = await peerInstance.add({
+  const hash = await peerInstance.put({
+    _id: user.uid,
+    uid: user.uid,
     location,
     updated: time,
     user
@@ -30,8 +34,10 @@ export const watchLocations = async (syncProcess) => {
   // })
   peerInstance.events.on('replicated', async (value) => {
     const networkPeers = await ipfs.swarm.peers()
-    const databasePeers = await ipfs.pubsub.peers(peerInstance.address.toString())
-    const data = peerInstance.iterator({ limit: 100 }).collect()
-    syncProcess({ networkPeers, databasePeers, data })
+    // const databasePeers = await ipfs.pubsub.peers(peerInstance.address.toString())
+    // const data = peerInstance.iterator({ limit: 100 }).collect()
+    const data = await peerInstance
+      .query(() => true)
+    syncProcess({ networkPeers, data })
   })
 }
