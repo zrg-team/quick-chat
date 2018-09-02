@@ -260,7 +260,7 @@ class ChatInput extends Component {
     if (!modalValue) {
       return Notification.error('Url required!')
     }
-    let errors = null
+    // let errors = null
     switch (type) {
       case 'youtube':
         const videoId = youtubeParser(modalValue)

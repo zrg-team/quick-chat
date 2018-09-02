@@ -30,7 +30,6 @@ export const signInByEmail = async (email, proveMe) => {
     }
     throw new Error('LOGIN_FAIL')
   } catch (err) {
-    console.log('signInByEmail', err)
     return false
   }
 }
@@ -124,21 +123,25 @@ export function validateSessionSecurity (proveMe) {
 }
 
 export function shouldUnlock () {
-  const state = storeAccessible.getState()
-  const sessionSecurity = state.common.sessionSecurity
-  const approveID = state.session.approveID
-  if (approveID) {
-    return true
+  try {
+    const state = storeAccessible.getState()
+    const sessionSecurity = state.common.sessionSecurity
+    const approveID = state.session.approveID
+    if (approveID) {
+      return true
+    }
+    const auth = firebase.auth.currentUser
+    if (!auth) {
+      return signOut()
+    }
+    const loginTime = new Date(auth.metadata.lastSignInTime).getTime()
+    const key = getMe(sessionSecurity, `${loginTime}`)
+    if (!key) {
+      return signOut()
+    }
+    storeAccessible.dispatch(setUserApproveID(key))
+    return key
+  } catch (err) {
+    signOut()
   }
-  const auth = firebase.auth.currentUser
-  if (!auth) {
-    throw new Error('AUTHENTICATION_FAIL_MISSING')
-  }
-  const loginTime = new Date(auth.metadata.lastSignInTime).getTime()
-  const key = getMe(sessionSecurity, `${loginTime}`)
-  if (!key) {
-    throw new Error('AUTHENTICATION_KEY')
-  }
-  storeAccessible.dispatch(setUserApproveID(key))
-  return key
 }

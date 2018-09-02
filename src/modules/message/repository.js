@@ -49,7 +49,6 @@ export const readed = async room => {
     const results = await readedFunc({
       room
     })
-    console.log('results', results)
     return results
   } catch (err) {
     console.log('err', err)
@@ -65,7 +64,6 @@ export const buzzMessage = async (user, room, unread = 1) => {
       room: room.id,
       count: unread
     })
-    console.log('buzzMessage', results)
     return true
   } catch (err) {
     console.log('err', err)

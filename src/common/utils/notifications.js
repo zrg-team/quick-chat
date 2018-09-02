@@ -27,7 +27,6 @@ export const requestMessageToken = (user) => {
         .update({
           messageToken
         })
-      console.log('messageToken', messageToken)
       return messageToken
     })
     .catch(function (err) {

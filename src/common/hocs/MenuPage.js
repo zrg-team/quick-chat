@@ -6,7 +6,8 @@ import {
   Public,
   Dashboard,
   ExitToApp,
-  PeopleTwoTone
+  PeopleTwoTone,
+  Map as MapIcon
 } from '@material-ui/icons'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { signOut } from '../utils/authentication'
@@ -28,6 +29,12 @@ const SIDDE_BARS = [
     sidebarName: 'Messages',
     navbarName: 'Material Dashboard',
     icon: Dashboard
+  },
+  {
+    path: '/map',
+    sidebarName: 'Find Around You',
+    navbarName: 'Material Around',
+    icon: MapIcon
   },
   {
     path: '/friend',
