@@ -6,9 +6,11 @@ export const updateLocation = async (user, location, lastHash) => {
   }
   const time = new Date().toISOString()
   if (user.uid) {
-    await peerInstance.del(user.uid).catch((err) => {
-      console.log('delete', err)
-    })
+    try {
+      await peerInstance.del(user.uid)
+    } catch (err) {
+      console.log('NO_DELETE')
+    }
   }
   const hash = await peerInstance.put({
     _id: user.uid,
