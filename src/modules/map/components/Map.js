@@ -33,12 +33,14 @@ class Map extends Component {
     }
   }
   updateLocationProcess () {
-    const { updateLocation, user, hash } = this.props
     if (navigator.geolocation) {
       this.intervalLocation = navigator.geolocation.watchPosition((position) => {
+        const { updateLocation, user, hash } = this.props
         const latitude = position.coords.latitude
         const longitude = position.coords.longitude
-        updateLocation(user, { lat: latitude, lng: longitude }, hash)
+        if (!this.props.location || this.props.location.lat !== latitude || this.props.location.lng !== longitude) {
+          updateLocation(user, { lat: latitude, lng: longitude }, hash)
+        }
       }, () => {
         Notification.warning("Can't get your location.")
       }, {
@@ -88,7 +90,7 @@ class Map extends Component {
           position={location}
         />
         {locations && locations.map((data, index) => {
-          if (user.uid === data.ui) {
+          if (user.uid === data.uid) {
             return null
           }
           return (
