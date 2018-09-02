@@ -53,6 +53,7 @@ const variantIcon = {
   info: InfoIcon,
 }
 
+let instanceNotification = null
 class ConsecutiveSnackbars extends React.Component {
   queue = []
 
@@ -62,11 +63,12 @@ class ConsecutiveSnackbars extends React.Component {
   }
 
   componentWillMount () {
-    ConsecutiveSnackbars.instance = this
+    instanceNotification = this
   }
 
   componentWillUnmount () {
-    delete ConsecutiveSnackbars.instance
+    // delete instanceNotification
+    instanceNotification = null
   }
 
   show = (message, variant) => {
@@ -159,21 +161,21 @@ ConsecutiveSnackbars.propTypes = {
 export default {
   Component: withStyles(styles)(ConsecutiveSnackbars),
   show (message, variant = 'info') {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, variant)
+    instanceNotification && instanceNotification.show(message, variant)
   },
   success (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'success')
+    instanceNotification && instanceNotification.show(message, 'success')
   },
   error (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'error')
+    instanceNotification && instanceNotification.show(message, 'error')
   },
   info (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'info')
+    instanceNotification && instanceNotification.show(message, 'info')
   },
   warning (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'warning')
+    instanceNotification && instanceNotification.show(message, 'warning')
   },
   hide () {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.handleClose(null, null)
+    instanceNotification && instanceNotification.handleClose(null, null)
   }
 }

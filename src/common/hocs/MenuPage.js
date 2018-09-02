@@ -61,10 +61,10 @@ class MenuPage extends React.Component {
     this.handleDrawerToggle = this.handleDrawerToggle.bind(this)
   }
   componentDidMount () {
-    if (navigator.platform.indexOf('Win') > -1) {
-      // eslint-disable-next-line
-      const ps = new PerfectScrollbar(this.refs.mainPanel)
-    }
+    // if (navigator.platform.indexOf('Win') > -1) {
+    //   // eslint-disable-next-line
+    //   const ps = new PerfectScrollbar(this.refs.mainPanel)
+    // }
   }
   componentDidUpdate () {
     this.refs.mainPanel.scrollTop = 0

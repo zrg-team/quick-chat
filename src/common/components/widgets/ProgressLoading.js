@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+let instanceProgressLoading = null
 class ProgressLoading extends Component {
   count = 0
   runningTimerId = null
@@ -70,12 +71,13 @@ class ProgressLoading extends Component {
   }
 
   componentWillMount () {
-    ProgressLoading.instance = this
+    instanceProgressLoading = this
   }
 
   componentWillUnmount () {
     clearTimeout(this.hidingTimerId)
-    delete ProgressLoading.instance
+    // delete instanceProgressLoading
+    instanceProgressLoading = null
   }
 
   isVisible () {
@@ -86,15 +88,15 @@ class ProgressLoading extends Component {
 export default {
   Component: ProgressLoading,
   show () {
-    ProgressLoading.instance.show()
+    instanceProgressLoading && instanceProgressLoading.show()
   },
   hide () {
-    ProgressLoading.instance.hide()
+    instanceProgressLoading && instanceProgressLoading.hide()
   },
   hideAll () {
-    ProgressLoading.instance.hideAll()
+    instanceProgressLoading && instanceProgressLoading.hideAll()
   },
   isVisible () {
-    return ProgressLoading.instance.isVisible()
+    return instanceProgressLoading && instanceProgressLoading.isVisible()
   }
 }
