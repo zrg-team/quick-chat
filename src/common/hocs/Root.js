@@ -12,7 +12,6 @@ import {
   validateSessionKey,
   shouldGenerateApproveID
 } from '../utils/authentication'
-import { initPeer } from '../utils/peerDatabase'
 import { getUser } from '../../modules/user/repository'
 import { requestMessageToken } from '../utils/notifications'
 import Notification from '../components/widgets/Notification'
@@ -40,7 +39,6 @@ export default class Root extends Component {
     try {
       await locate()
       await web3.init()
-      const result = await initPeer()
       // if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
       //   let email = store.get('authenticationMail')
       //   if (!email) {

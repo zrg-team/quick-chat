@@ -56,12 +56,16 @@ class Map extends Component {
   updateLocationProcess () {
     if (navigator.geolocation) {
       this.intervalLocation = navigator.geolocation.watchPosition((position) => {
-        const { updateLocation, user, hash } = this.props
+        const { updateLocation, user } = this.props
         const latitude = position.coords.latitude
         const longitude = position.coords.longitude
-        if (!this.props.location || this.props.location.lat !== latitude || this.props.location.lng !== longitude) {
-          updateLocation(user, { lat: latitude, lng: longitude }, hash)
-        }
+        // if (!this.props.location ||
+        //   this.props.location.lat !== latitude ||
+        //   this.props.location.lng !== longitude
+        // ) {
+        //   updateLocation(user, { lat: latitude, lng: longitude })
+        // }
+        updateLocation(user, { lat: latitude, lng: longitude })
       }, () => {
         Notification.warning("Can't get your location.")
       }, {

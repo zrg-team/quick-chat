@@ -3,14 +3,16 @@ import Map from '../components/Map'
 import { MODULE_NAME as MODULE_MAP } from '../models'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { updateLocation, watchLocations } from '../repository'
-import { setMyLocation, setLocations } from '../actions'
+import { setMyLocation, setLocations, deleteLocations } from '../actions'
+import { selectorLocations } from '../selector'
 
 const mapDispatchToProps = (dispatch, props) => ({
-  updateLocation: async (user, location, hash) => {
+  updateLocation: async (user, location) => {
     try {
-      const newHash = await updateLocation(user, location, hash)
-      if (newHash) {
-        dispatch(setMyLocation({ location, hash: newHash }))
+      const { room } = props
+      const result = await updateLocation(room, user, location)
+      if (result) {
+        dispatch(setMyLocation({ location, hash: result }))
       }
     } catch (err) {
       console.log('updateLocation', err)
@@ -18,8 +20,15 @@ const mapDispatchToProps = (dispatch, props) => ({
     }
   },
   watchLocations: () => {
-    watchLocations(({ data }) => {
-      dispatch(setLocations(data))
+    const { room } = props
+    watchLocations(room, ({ message }) => {
+      const from = message.from
+      const data = JSON.parse(message.data.toString())
+      dispatch(setLocations({from, data}))
+    }, () => {
+
+    }, (peer) => {
+      dispatch(deleteLocations(peer))
     })
   }
 })
@@ -27,7 +36,7 @@ const mapDispatchToProps = (dispatch, props) => ({
 const mapStateToProps = state => ({
   hash: state[MODULE_MAP].hash,
   location: state[MODULE_MAP].location,
-  locations: state[MODULE_MAP].locations,
+  locations: selectorLocations(state),
   user: state[MODULE_USER].userInformation
 })
 

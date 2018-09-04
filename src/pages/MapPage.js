@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText
 } from '@material-ui/core'
+import { initIPFS, stopAll } from '../common/utils/ipfs'
 import appStyle from '../common/styles/app'
 import { MAP_API_URL } from '../common/models'
 import MenuPage from '../common/hocs/MenuPage'
@@ -20,6 +21,8 @@ class MapPage extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      room: null,
+      ipfs: null,
       requestDialog: false,
       access: false,
       firstLocation: null
@@ -50,21 +53,33 @@ class MapPage extends React.Component {
     })
     replace('/public')
   }
-  componentDidMount () {
-    this.setState({ requestDialog: true })
+  async componentDidMount () {
+    try {
+      const { room, ipfs } = await initIPFS()
+      this.setState({ requestDialog: true, room, ipfs })
+    } catch (err) {
+      replace('/public')
+    }
+  }
+  componentWillUnmount () {
+    const { room, ipfs } = this.state
+    stopAll(ipfs, room)
   }
   render () {
-    const { requestDialog, access, firstLocation } = this.state
+    const { room, ipfs, requestDialog, access, firstLocation } = this.state
     const { classes } = this.props
     return (
       <MenuPage marginTop={false}>
-        <Map
+        {(room && ipfs) ? <Map
+          room={room}
+          ipfs={ipfs}
           access={access}
           googleMapURL={MAP_API_URL}
           firstLocation={firstLocation}
           loadingElement={<div style={{ height: `100%` }} />}
           containerElement={<div className={classes.fullContainer} />}
           mapElement={<div style={{ height: `100%` }} />} />
+          : null}
         <Dialog
           open={requestDialog}
           onClose={this.handleClose}

@@ -4,7 +4,7 @@ import * as actions from './actions'
 const defaultState = {
   location: null,
   hash: null,
-  locations: []
+  locations: {}
 }
 
 const handlers = {
@@ -13,10 +13,33 @@ const handlers = {
     hash: action.payload.hash,
     location: action.payload.location
   }),
-  [actions.setLocations]: (state, action) => ({
-    ...state,
-    locations: action.payload
-  })
+  [actions.deleteLocations]: (state, action) => {
+    const locations = state.locations
+    delete locations[action.payload]
+    return {
+      ...state,
+      locations: {
+        ...locations
+      }
+    }
+  },
+  [actions.setLocations]: (state, action) => {
+    if (!state.locations[action.payload.from] &&
+      Object.keys(state.locations) >= 256) {
+      return state
+    }
+    return {
+      ...state,
+      locations: {
+        ...state.locations,
+        [action.payload.from]: {
+          ...state.locations[action.payload.from]
+           ? state.locations[action.payload.from] : {},
+          ...action.payload.data
+        }
+      }
+    }
+  }
 }
 
 export default handleActions(handlers, defaultState)

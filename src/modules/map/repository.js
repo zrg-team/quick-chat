@@ -1,48 +1,33 @@
-import { ipfs, peerInstance } from '../../common/utils/peerDatabase'
-
-export const updateLocation = async (user, location, lastHash) => {
-  if (!peerInstance) {
+export const updateLocation = async (room, user, location) => {
+  if (!room) {
     return false
   }
   const time = new Date().toISOString()
-  if (user.uid) {
-    try {
-      await peerInstance.del(user.uid)
-    } catch (err) {
-      console.log('NO_DELETE')
-    }
-  }
-  const hash = await peerInstance.put({
+  await room.broadcast(JSON.stringify({
     _id: user.uid,
     uid: user.uid,
     location,
     updated: time,
     user
-  })
-  return hash
+  }))
+  return true
 }
 
-export const watchLocations = async (syncProcess) => {
-  if (!peerInstance) {
+export const watchLocations = async (room, messageProcess, joinedProcess, leftProcess) => {
+  if (!room) {
     return false
   }
-  // When we update the database, display result
-  // peerInstance.events.on('write', async (value) => {
-  //   console.log('value', value, peerInstance.address.toString())
-  //   const networkPeers = await ipfs.swarm.peers()
-  //   const databasePeers = await ipfs.pubsub.peers(peerInstance.address.toString())
-  //   console.log('networkPeers', networkPeers)
-  //   console.log('databasePeers', databasePeers)
-  // })
-  // peerInstance.events.on('replicated', (evt) => {
-  //   console.log('db replicated', evt)
-  // })
-  peerInstance.events.on('replicated', async (value) => {
-    const networkPeers = await ipfs.swarm.peers()
-    // const databasePeers = await ipfs.pubsub.peers(peerInstance.address.toString())
-    // const data = peerInstance.iterator({ limit: 100 }).collect()
-    const data = await peerInstance
-      .query(() => true)
-    syncProcess({ networkPeers, data })
+  room.on('peer joined', (peer) => {
+    console.log('Peer joined the room', peer)
+    joinedProcess && joinedProcess(peer)
+  })
+
+  room.on('peer left', (peer) => {
+    console.log('Peer left...', peer)
+    leftProcess && leftProcess(peer)
+  })
+  room.on('message', (message) => {
+    console.log('Peer message...', message)
+    messageProcess({ message })
   })
 }
