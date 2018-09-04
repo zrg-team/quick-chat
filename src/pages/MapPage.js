@@ -38,7 +38,7 @@ class MapPage extends React.Component {
           firstLocation: { lat: latitude, lng: longitude }
         })
       }, () => {
-        Notification.warning("Can't get your location.")
+        this.handleClose()
       })
     } else {
       Notification.warning('Geolocation is not supported by this browser.')
@@ -57,7 +57,7 @@ class MapPage extends React.Component {
     const { requestDialog, access, firstLocation } = this.state
     const { classes } = this.props
     return (
-      <MenuPage>
+      <MenuPage marginTop={false}>
         <Map
           access={access}
           googleMapURL={MAP_API_URL}

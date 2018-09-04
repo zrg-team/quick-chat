@@ -82,4 +82,4 @@ export const TIMEOUT = 12000
 
 export const GOOGLE_API_KEY = 'AIzaSyCAQuBBJQNTGF3mMDGC1IX7Kkf-5Szop18'
 
-export const MAP_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&v=3.exp&libraries=geometry,drawing,places`
+export const MAP_API_URL = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&v=3.exp&libraries=drawing,places`

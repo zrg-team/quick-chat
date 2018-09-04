@@ -15,9 +15,12 @@ class Map extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      searchText: ''
+      searchText: '',
+      directions: undefined
     }
+
     this.intervalLocation = null
+    this.directTo = this.directTo.bind(this)
     this.updateLocationProcess = this.updateLocationProcess.bind(this)
   }
   componentWillReceiveProps (nextProps) {
@@ -31,6 +34,24 @@ class Map extends Component {
     if (navigator.geolocation && this.intervalLocation) {
       navigator.geolocation.clearWatch(this.intervalLocation)
     }
+  }
+  directTo (toLocation) {
+    const { location } = this.props
+    const DirectionsService = new window.google.maps.DirectionsService()
+
+    DirectionsService.route({
+      origin: new window.google.maps.LatLng(location.lat, location.lng),
+      destination: new window.google.maps.LatLng(toLocation.lat, toLocation.lng),
+      travelMode: window.google.maps.TravelMode.DRIVING
+    }, (result, status) => {
+      if (status === window.google.maps.DirectionsStatus.OK) {
+        this.setState({
+          directions: result
+        })
+      } else {
+        console.error(`error fetching directions ${result}`)
+      }
+    })
   }
   updateLocationProcess () {
     if (navigator.geolocation) {
@@ -99,11 +120,12 @@ class Map extends Component {
                 url: userPin,
                 scaledSize: new window.google.maps.Size(39, 43)
               }}
+              onClick={() => this.directTo(data.location)}
               key={`${index}_${data.uid}`}
               position={data.location}
               labelVisible
               animation={window.google.maps.Animation.DROP}
-              labelAnchor={new window.google.maps.Point(31, 65)}
+              labelAnchor={new window.google.maps.Point(60, 65)}
               labelStyle={{
                 backgroundColor: '#4b86b4',
                 fontSize: '10px',

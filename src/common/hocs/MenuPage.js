@@ -73,7 +73,7 @@ class MenuPage extends React.Component {
     this.setState({ mobileOpen: !this.state.mobileOpen })
   }
   render () {
-    const { classes, children, ...rest } = this.props
+    const { classes, children, marginTop = true, ...rest } = this.props
     return (
       <div className={classes.wrapper}>
         <Sidebar
@@ -92,7 +92,7 @@ class MenuPage extends React.Component {
             handleDrawerToggle={this.handleDrawerToggle}
             {...rest}
           />
-          <div className={classes.defaulRow} />
+          {marginTop && <div className={classes.defaulRow} />}
           <div className={classes.flexContainer}>
             <CSSTransitionGroup
               transitionAppear

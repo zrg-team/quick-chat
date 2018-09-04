@@ -56,7 +56,6 @@ export async function initPeer () {
           indexBy: 'uid'
         })
         timeout = setTimeout(() => {
-          console.log('PEER_DATABASE_TIMEOUT')
           clearTimeout(timeout)
           timeout = null
           peerInstance = null
@@ -76,10 +75,14 @@ export async function initPeer () {
 const load = async (db, resolve) => {
   db.events.on('ready', () => console.log('db ready'))
   // When database gets replicated with a peer, display results
-  db.events.on('replicated', () => console.log('db replicated'))
+  // db.events.on('replicated', (evt) => {
+  //   console.log('db replicated', evt)
+  // })
   db.events.on('write', () => console.log('db write'))
 
-  db.events.on('replicate.progress', () => console.log('db replicate.progress'))
+  // db.events.on('replicate.progress', (evt) => {
+  //   console.log('db replicate.progress', evt)
+  // })
 
   // Hook up to the load progress event and render the progress
   let maxTotal = 0

@@ -34,6 +34,9 @@ export const watchLocations = async (syncProcess) => {
   //   console.log('networkPeers', networkPeers)
   //   console.log('databasePeers', databasePeers)
   // })
+  // peerInstance.events.on('replicated', (evt) => {
+  //   console.log('db replicated', evt)
+  // })
   peerInstance.events.on('replicated', async (value) => {
     const networkPeers = await ipfs.swarm.peers()
     // const databasePeers = await ipfs.pubsub.peers(peerInstance.address.toString())
