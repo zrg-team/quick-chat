@@ -1,0 +1,173 @@
+.rce-container-mbox {
+    flex-direction: column;
+    display: block;
+    overflow: hidden;
+    min-width: 200px;
+}
+
+.rce-mbox-forward {
+    width: 30px;
+    height: 30px;
+    border-radius: 20px;
+    background: #fff;
+    position: absolute;
+    /*display: none;*/
+    flex-direction: row;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 5px 0 rgba(164, 164, 164, 1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.rce-mbox-forward-left {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    left: -50px;
+}
+
+.rce-mbox-forward-right {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    right: -50px;
+}
+
+.rce-container-mbox:hover .rce-mbox-forward-left {
+    opacity: 1;
+    visibility: visible;
+}
+
+.rce-container-mbox:hover .rce-mbox-forward-right {
+    opacity: 1;
+    visibility: visible;
+}
+
+.rce-mbox {
+    position: relative;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .2);
+    border-top-left-radius: 0px;
+    margin-left: 20px;
+    margin-right: 5px;
+    margin-top: 3px;
+    flex-direction: column;
+    margin-bottom: 3px;
+    padding: 6px 9px 8px 9px;
+    float: left;
+    min-width: 140px;
+}
+
+.rce-mbox-body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.rce-mbox.rce-mbox-right {
+    float: right;
+    margin-left: 5px;
+    margin-right: 20px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 5px;
+}
+
+.rce-mbox-text {
+    font-size: 13.6px;
+    word-break: break-word;
+}
+
+.rce-mbox-text:after {
+    content: "\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0"
+}
+
+.rce-mbox-time {
+    text-align: right;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+    position: absolute;
+    right: -4px;
+    bottom: -5px;
+}
+
+.rce-mbox-time.non-copiable:before {
+    content: attr(data-text);
+}
+
+.rce-mbox-time-block {
+    /*position: relative;*/
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-right: -6px;
+    margin-left: -6px;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 2px;
+    background: linear-gradient(to top, rgba(0,0,0,0.33), transparent);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: #fff;
+}
+
+.rce-mbox--clear-padding {
+    padding-bottom: 3px;
+}
+
+.rce-mbox.rce-mbox--clear-notch {
+    border-radius: 5px 5px 5px 5px !important;
+}
+
+.rce-mbox-right-notch {
+    position: absolute;
+    right: -14px;
+    top: 0px;
+    width: 15px;
+    height: 15px;
+    fill: white;
+    filter: drop-shadow( 2px 0px 1px rgba(0, 0, 0, .2));
+}
+
+.rce-mbox-left-notch {
+    position: absolute;
+    left: -14px;
+    top: 0px;
+    width: 15px;
+    height: 15px;
+    fill: white;
+}
+
+.rce-mbox-title {
+    margin: 0;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 13px;
+    color: #4f81a1;
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.rce-mbox-title:hover {
+    text-decoration: underline;
+}
+
+.rce-mbox-title--clear {
+    margin-bottom: 5px;
+}
+
+.rce-mbox-status {
+    margin-left: 3px;
+    font-size: 15px;
+}
+
+.rce-mbox-title > .rce-avatar-container {
+    margin-right: 5px;
+}

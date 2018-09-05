@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MessageBox component should render without issues 1`] = `
+<div
+  className="rce-container-mbox"
+  onClick={null}
+>
+  <div
+    className="rce-mbox"
+  >
+    <div
+      className="rce-mbox-body"
+    >
+      <div
+        className="rce-mbox-text"
+      />
+      <div
+        className="rce-mbox-time non-copiable"
+        data-text="a few seconds ago"
+      >
+        <span
+          className="rce-mbox-status"
+        >
+          <IoAndroidDoneAll
+            color="#4FC3F7"
+          />
+        </span>
+      </div>
+    </div>
+    <div>
+      <svg
+        className="rce-mbox-left-notch"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <filter
+            id="filter1"
+            x="0"
+            y="0"
+          >
+            <feOffset
+              dx="-2"
+              dy="-5"
+              in="SourceAlpha"
+              result="offOut"
+            />
+            <feGaussianBlur
+              in="offOut"
+              result="blurOut"
+              stdDeviation="3"
+            />
+            <feBlend
+              in="SourceGraphic"
+              in2="blurOut"
+              mode="normal"
+            />
+          </filter>
+        </defs>
+        <path
+          d="M20 0v20L0 0"
+          filter="url(#filter1)"
+        />
+      </svg>
+    </div>
+  </div>
+</div>
+`;

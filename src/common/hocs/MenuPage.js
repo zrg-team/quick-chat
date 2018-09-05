@@ -18,6 +18,12 @@ import logo from '../../assets/images/chat-icon.png'
 
 const SIDDE_BARS = [
   {
+    path: '/profile',
+    sidebarName: 'Profile',
+    navbarName: 'Material Dashboard',
+    icon: PeopleTwoTone
+  },
+  {
     path: '/public',
     sidebarName: 'Public',
     navbarName: 'Material Public',
