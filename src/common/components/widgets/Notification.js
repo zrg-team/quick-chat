@@ -112,44 +112,45 @@ class ConsecutiveSnackbars extends React.Component {
     const Icon = variantIcon[variant]
 
     return (
-      <div>
-        <Snackbar
-          key={key}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={this.state.open}
-          autoHideDuration={6000}
-          onClose={this.handleClose}
-          onExited={this.handleExited}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-        >
-          <SnackbarContent
-            className={classNames(classes[variant], classes.margin)}
-            aria-describedby='client-snackbar'
-            message={
-              <span id='client-snackbar' className={classes.message}>
-                <Icon color='primary' className={classNames(classes.icon || '', classes.iconVariant || '')} />
-                {message}
-              </span>
-            }
-            action={[
-              <IconButton
-                key='close'
-                aria-label='Close'
-                color='inherit'
-                className={classes.close}
-                onClick={this.handleClose}
-              >
-                <CloseIcon className={classes.icon} />
-              </IconButton>,
-            ]}
-          />
-        </Snackbar>
-      </div>
+      <Snackbar
+        key={key}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={this.state.open}
+        autoHideDuration={5000}
+        onClose={this.handleClose}
+        onExited={this.handleExited}
+        ContentProps={{
+          'aria-describedby': 'message-id',
+        }}
+      >
+        <SnackbarContent
+          className={classNames(classes[variant], classes.margin)}
+          aria-describedby='client-snackbar'
+          message={
+            <span id='client-snackbar' className={classes.message}>
+              {Icon && <Icon
+                color='primary'
+                className={classNames(classes.icon, classes.iconVariant)}
+              />}
+              <span>{message || ''}</span>
+            </span>
+          }
+          action={[
+            <IconButton
+              key='close'
+              aria-label='Close'
+              color='inherit'
+              className={classes.close}
+              onClick={this.handleClose}
+            >
+              <CloseIcon className={classes.icon} />
+            </IconButton>
+          ]}
+        />
+      </Snackbar>
     )
   }
 }

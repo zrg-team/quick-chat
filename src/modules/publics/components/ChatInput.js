@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import validate from 'validate.js'
 import { Input } from 'react-chat-elements'
 import {
   withStyles

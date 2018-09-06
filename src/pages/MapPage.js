@@ -86,7 +86,7 @@ class MapPage extends React.Component {
           aria-labelledby='alert-dialog-title'
           aria-describedby='alert-dialog-description'
         >
-          <DialogTitle id='alert-dialog-title'>{"Use Google's location service?"}</DialogTitle>
+          <DialogTitle id='alert-dialog-title'>Location service required</DialogTitle>
           <DialogContent>
             <DialogContentText id='alert-dialog-description'>
               Let us share your location with another user ?

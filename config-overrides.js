@@ -33,11 +33,11 @@ module.exports = function override(config, env) {
   config.plugins.push(new UglifyJsPlugin({
     parallel: true,
     sourceMap: false,
-    output: {
-      comments: false,
-      // Turned on because emoji and regex is not minified properly using default
-      // https://github.com/facebookincubator/create-react-app/issues/2488
-      ascii_only: true
+    uglifyOptions: {
+      output: {
+        comments: false,
+        beautify: false
+      }
     }
   }));
   return config;
