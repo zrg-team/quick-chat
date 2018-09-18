@@ -14,6 +14,7 @@ const ipfsOptions = {
     }
   }
 }
+export let ipfsInstance = {}
 export async function initIPFS () {
   // Create IPFS instance
   let timeout = null
@@ -26,7 +27,8 @@ export async function initIPFS () {
       try {
         const room = Room(ipfs, 'ipfs-pubsub.chatme.locations')
         room.on('subscribed', (peer) => {
-          resolve({ room, ipfs })
+          ipfsInstance = { room, ipfs }
+          resolve(true)
         })
       } catch (err) {
         clearTimeout(timeout)
@@ -42,11 +44,11 @@ export async function initIPFS () {
   })
 }
 
-export async function stopAll (ipfs, room) {
-  if (ipfs) {
-    ipfs.stop()
+export async function stopAll () {
+  if (ipfsInstance.ipfs) {
+    ipfsInstance.ipfs.stop()
   }
-  if (room) {
-    room.leave()
+  if (ipfsInstance.room) {
+    ipfsInstance.room.leave()
   }
 }

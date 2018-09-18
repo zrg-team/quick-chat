@@ -8,12 +8,11 @@ import {
   DialogContent,
   DialogContentText
 } from '@material-ui/core'
-import { initIPFS, stopAll } from '../common/utils/ipfs'
+import { ipfsInstance } from '../common/utils/ipfs'
 import appStyle from '../common/styles/app'
 import { MAP_API_URL } from '../common/models'
 import MenuPage from '../common/hocs/MenuPage'
 import Map from '../modules/map/containers/Map'
-// import Button from '../libraries/CustomButtons/Button'
 import { replace } from '../common/utils/navigation'
 import Notification from '../common/components/widgets/Notification'
 
@@ -55,21 +54,17 @@ class MapPage extends React.Component {
   }
   async componentDidMount () {
     try {
-      const { room, ipfs } = await initIPFS()
+      const { room, ipfs } = ipfsInstance
       this.setState({ requestDialog: true, room, ipfs })
     } catch (err) {
       replace('/public')
     }
   }
-  componentWillUnmount () {
-    const { room, ipfs } = this.state
-    stopAll(ipfs, room)
-  }
   render () {
     const { room, ipfs, requestDialog, access, firstLocation } = this.state
     const { classes } = this.props
     return (
-      <MenuPage marginTop={false}>
+      <MenuPage>
         {(room && ipfs) ? <Map
           room={room}
           ipfs={ipfs}

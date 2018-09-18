@@ -13,9 +13,6 @@ const EC = require('elliptic').ec
 
 export const createUserByEmail = async (email, iHere) => {
   const result = await firebase.auth.createUserWithEmailAndPassword(email, iHere)
-  // const ec = new EC('curve25519')
-  // const key = ec.keyFromPrivate(`${iHere}.${firebase.auth.currentUser.uid}`)
-  // const publicKey = key.getPublic(false, 'hex')
   firebase.auth.currentUser.sendEmailVerification()
   return result
 }
@@ -53,6 +50,9 @@ export function authenticationEmail (email) {
 export async function updatePublicKey (user, authentication) {
   const state = storeAccessible.getState()
   const approveHash = state.session.approveHash
+  if (!approveHash) {
+    throw new Error('MISSING_APPROVE_HASH')
+  }
   // FIXME: hashed on client or server
   const generateSessionID = firebase
     .functions

@@ -3,6 +3,7 @@ import validate from 'validate.js'
 // import { Input } from 'react-chat-elements'
 import {
   Card,
+  Button,
   Dialog,
   Tooltip,
   TextField,
@@ -30,7 +31,7 @@ import {
 import { Picker } from 'emoji-mart'
 import { URL_SCHEMA } from '../../../common/utils/regex'
 import Notification from '../../../common/components/widgets/Notification'
-import Button from '../../../libraries/CustomButtons/Button'
+import CustomButton from '../../../libraries/CustomButtons/Button'
 import Modal from '../../../common/components/widgets/Modal'
 import { youtubeParser, spotifyParser } from '../models'
 import CustomTextField from '../../../libraries/CustomInput/CustomTextField'
@@ -331,7 +332,7 @@ class ChatInput extends Component {
             multiline: true,
             rowsMax: 5,
             endAdornment: (
-              <Button
+              <CustomButton
                 color='success'
                 size='lg'
                 style={{
@@ -340,7 +341,7 @@ class ChatInput extends Component {
                 onClick={this.send}
               >
                 Send
-              </Button>
+              </CustomButton>
             ),
             onChange: this.onChange
           }}
