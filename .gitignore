@@ -4,3 +4,4 @@ lerna-debug.log
 .yarnclean
 yarn-error.log
 build/
+.DS_Store
