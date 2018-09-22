@@ -1,0 +1,152 @@
+.no-page-container {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.scrollbar::-webkit-scrollbar-track
+{
+	/* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); */
+	background-color: transparent;
+}
+
+.scrollbar::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #BBBBBB;
+}
+
+.map_arrow_box {
+	position: relative;
+	background: #ffffff;
+}
+.map_arrow_box:after {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(255, 255, 255, 0);
+	border-top-color: #ffffff;
+	border-width: 30px;
+	margin-left: -30px;
+}
+
+div.card-send-ethereum {
+  min-width: 400px;
+  max-width: 400px;
+  max-height: 730px;
+  margin: 20px auto;
+  width: 40%;
+  height: 70%;
+  background: #27263F;  
+  border-radius: 3px;
+  box-shadow: 0 4px 30px #666;
+}
+
+div a.actived-send-ethereum {
+  color: #575F72;
+}
+
+div.content-header-send-ethereum {
+  margin-top: 35px;
+  text-align: center;
+}
+
+div.value-main-send-ethereum span {
+  font-size: 1.8em; 
+}
+
+div.value-main-send-ethereum {
+  font-size: 1.4em; 
+}
+
+div.rating-send-ethereum {
+  padding: 4px;
+  width: 130px;
+  border: 3px;
+  margin: 8px auto;
+  background: #3C2442;
+  color: #F80065;
+}
+
+div.title-send-ethereum {
+  color: #575F72;
+  margin-top: 50px; 
+  padding: 15px;
+}
+
+div.card-detail-send-ethereum {
+  margin-top: 15px;
+  background-color: #2D2B4B;
+  width: 100%;
+  height: 80px;
+  border-radius: 3px;
+}
+
+div.card-detail-send-ethereum:hover {
+  background: #292945;
+  cursor: pointer;
+}
+  
+
+div.main-content-send-ethereum {
+  padding: 15px;
+}
+
+div.card-detail-title-send-ethereum {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+div.cards-special-send-ethereum {
+  display: flex;
+  justify-content: space-between;
+}
+
+.value-send-ethereum {
+  color: #FFFFFF;
+  font-size: 1em;
+}
+
+a.value-send-ethereum {
+  text-decoration: underline;
+}
+
+.card-special-title-send-ethereum div {
+  margin-top: 15px;
+	align-items: center;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.card-special-title-send-ethereum p {
+  color: #FFFFFF;
+}
+
+.title-company-send-ethereum p {
+	margin-top: 5px;
+	max-width: 200px;
+	font-size: 12px;
+	margin-bottom: 0px;
+}
+
+.default-margin-send-ethereum {
+  margin-top: 15px;
+  width: 0px;
+  height: 60px;
+}
