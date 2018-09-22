@@ -1,9 +1,13 @@
 import React from 'react'
 import YouTube from 'react-youtube'
+import {
+  Tooltip
+} from '@material-ui/core'
 import { createSelector } from 'reselect'
 import { GOOGLE_API_KEY } from '../../common/models'
 import { MODULE_NAME as MODULE_MESSAGE } from './models'
 import { getMe } from '../../common/utils/cryptography'
+import ethereumLogo from '../../assets/images/ethereum-icon.svg'
 const ReactMarkdown = require('react-markdown')
 
 const getMessages = (state) => {
@@ -20,7 +24,9 @@ export const selectorMessages = createSelector(
     }
     return messages.map((item) => {
       try {
-        const type = ['text', 'url', 'markdown', 'youtube'].includes(item.type) ? 'text' : item.type
+        const type = ['text', 'url', 'markdown', 'youtube', 'ethereum', 'ethereum-transaction']
+          .includes(item.type)
+          ? 'text' : item.type
         const data = getMe(item.data, room.shared)
         let text = ''
         let uri = null
@@ -52,11 +58,102 @@ export const selectorMessages = createSelector(
           case 'markdown':
             text = <ReactMarkdown source={data} />
             break
+          case 'ethereum-transaction':
+            objectData = {
+              txID: data
+            }
+            text = (
+              <div className='card-send-ethereum'>
+                <div className='card-content-send-ethereum'>
+                  <div className='main-content-send-ethereum'>
+                    <div className='card-detail-send-ethereum'>
+                      <div className='card-detail-title-send-ethereum'>
+                        <img src={ethereumLogo} />
+                        <div className='title-company-send-ethereum'>
+                          <p>{`${objectData.txID}`.slice(0, 50)}...</p>
+                          <a href='javascript:void(0);' className='value-send-ethereum'>
+                            View In Blockchain
+                          </a>
+                        </div>
+                        <div className='default-margin-send-ethereum' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+            break
+          case 'ethereum':
+            objectData = JSON.parse(data)
+            text = !item.sender ? (
+              <div className='card-send-ethereum'>
+                <div className='card-content-send-ethereum'>
+                  <div className='main-content-send-ethereum'>
+                    <div className='card-detail-send-ethereum'>
+                      <div className='card-detail-title-send-ethereum'>
+                        <img src={ethereumLogo} />
+                        <div className='title-company-send-ethereum'>
+                          <Tooltip title={objectData.address} placement='top'>
+                            <p>{`${objectData.address}`.slice(0, 20)}...</p>
+                          </Tooltip>
+                          <p className='value-send-ethereum'>
+                            {objectData.value} <span>ETH</span>
+                          </p>
+                        </div>
+                        <div>
+                          <div className='cards-special-send-ethereum'>
+                            <div className='card-special-title-send-ethereum'>
+                              <div>
+                                <i className='fa fa-paper-plane' aria-hidden='true' />
+                              </div>
+                              <p>Send Money</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className='card-send-ethereum'>
+                <div className='card-content-send-ethereum'>
+                  <div className='main-content-send-ethereum'>
+                    <div className='card-detail-send-ethereum'>
+                      <div className='card-detail-title-send-ethereum'>
+                        <img src={ethereumLogo} />
+                        <div className='title-company-send-ethereum'>
+                          <Tooltip title={objectData.address} placement='top'>
+                            <p>{`${objectData.address}`.slice(0, 20)}...</p>
+                          </Tooltip>
+                          <p className='value-send-ethereum'>
+                            {objectData.value} <span>ETH</span>
+                          </p>
+                        </div>
+                        <div>
+                          <div className='cards-special-send-ethereum'>
+                            <div className='card-special-title-send-ethereum'>
+                              <div>
+                                <i className='fas fa-spinner' aria-hidden='true' />
+                              </div>
+                              <p>Waiting</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+            break
         }
         return {
+          ...item,
           title: item.sender ? undefined : room.guestName,
           position: item.sender ? 'right' : 'left',
           type: type,
+          messageType: item.type,
           text,
           uri,
           data: objectData,

@@ -3,8 +3,8 @@ import validate from 'validate.js'
 // import { Input } from 'react-chat-elements'
 import {
   Card,
+  Icon,
   Button,
-  Dialog,
   Tooltip,
   TextField,
   withStyles,
@@ -32,6 +32,7 @@ import { Picker } from 'emoji-mart'
 import { URL_SCHEMA } from '../../../common/utils/regex'
 import Notification from '../../../common/components/widgets/Notification'
 import CustomButton from '../../../libraries/CustomButtons/Button'
+import Dialog from '../../../common/components/widgets/Dialog'
 import Modal from '../../../common/components/widgets/Modal'
 import { youtubeParser, spotifyParser } from '../models'
 import CustomTextField from '../../../libraries/CustomInput/CustomTextField'
@@ -49,9 +50,11 @@ class ChatInput extends Component {
     }
     this.buzz = this.buzz.bind(this)
     this.send = this.send.bind(this)
+    this.closeDialog = this.closeDialog.bind(this)
     this.closeModal = this.closeModal.bind(this)
     this.onChange = this.onChange.bind(this)
     this.onChangeModalValue = this.onChangeModalValue.bind(this)
+    this.onChangeModalValueObject = this.onChangeModalValueObject.bind(this)
     this.addEmoji = this.addEmoji.bind(this)
     this.onChangeMarkdown = this.onChangeMarkdown.bind(this)
     this.sendMarkdownModal = this.sendMarkdownModal.bind(this)
@@ -61,10 +64,15 @@ class ChatInput extends Component {
     this.renderEmojiPicker = this.renderEmojiPicker.bind(this)
     this.submitModal = this.submitModal.bind(this)
     this.sendSpotifyModal = this.sendSpotifyModal.bind(this)
+    this.requestPaymentModal = this.requestPaymentModal.bind(this)
   }
 
   closeModal () {
     Modal.hide()
+  }
+
+  closeDialog () {
+    Dialog.hide()
   }
 
   addEmoji (emoji) {
@@ -95,13 +103,70 @@ class ChatInput extends Component {
     )
   }
 
+  requestPaymentModal () {
+    const { classes } = this.props
+    Dialog.show(
+      <div className={classes.dialogContainer}>
+        <DialogTitle id='form-dialog-title'>Request Ethereum</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Provice ethereum information
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin='dense'
+            id='ethereum_address'
+            label='Ethereum address'
+            type='text'
+            fullWidth
+            onChange={(e) => {
+              let { modalValue } = this.state
+              if (!modalValue) {
+                modalValue = {}
+              }
+              modalValue.address = e.target.value
+              this.onChangeModalValueObject(modalValue, 'ethereum')
+            }}
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='ethereum_value'
+            label='value'
+            type='text'
+            fullWidth
+            onChange={(e) => {
+              let { modalValue } = this.state
+              if (!modalValue) {
+                modalValue = {}
+              }
+              modalValue.value = e.target.value
+              this.onChangeModalValueObject(modalValue, 'ethereum')
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={this.closeDialog}
+            color='primary'
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={this.submitModal}
+            color='primary'
+          >
+            Send
+          </Button>
+        </DialogActions>
+      </div>
+    )
+  }
+
   sendSpotifyModal () {
-    Modal.show(
-      <Dialog
-        open
-        onClose={this.handleClose}
-        aria-labelledby='form-dialog-title'
-      >
+    const { classes } = this.props
+    Dialog.show(
+      <div className={classes.dialogContainer}>
         <DialogTitle id='form-dialog-title'>Spotify music</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -119,7 +184,7 @@ class ChatInput extends Component {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={this.closeModal}
+            onClick={this.closeDialog}
             color='primary'
           >
             Cancel
@@ -131,17 +196,14 @@ class ChatInput extends Component {
             Send
           </Button>
         </DialogActions>
-      </Dialog>
+      </div>
     )
   }
 
   sendVideoModal () {
-    Modal.show(
-      <Dialog
-        open
-        onClose={this.handleClose}
-        aria-labelledby='form-dialog-title'
-      >
+    const { classes } = this.props
+    Dialog.show(
+      <div className={classes.dialogContainer}>
         <DialogTitle id='form-dialog-title'>Youtube</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -159,7 +221,7 @@ class ChatInput extends Component {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={this.closeModal}
+            onClick={this.closeDialog}
             color='primary'
           >
             Cancel
@@ -171,7 +233,7 @@ class ChatInput extends Component {
             Send
           </Button>
         </DialogActions>
-      </Dialog>
+      </div>
     )
   }
 
@@ -252,7 +314,7 @@ class ChatInput extends Component {
     this.setState({
       value: ''
     })
-    Modal.hide()
+    Dialog.hide()
   }
 
   submitModal () {
@@ -274,7 +336,7 @@ class ChatInput extends Component {
         this.setState({
           modalValue: ''
         })
-        Modal.hide()
+        Dialog.hide()
         break
       case 'spotify':
         const spotifyId = spotifyParser(modalValue)
@@ -287,7 +349,22 @@ class ChatInput extends Component {
         this.setState({
           modalValue: ''
         })
-        Modal.hide()
+        Dialog.hide()
+        break
+      case 'ethereum':
+        if (!modalValue || !modalValue.address) {
+          return Notification.error('Ethereum address required!')
+        }
+        if (!modalValue || !modalValue.value) {
+          return Notification.error('Ethereum value required!')
+        }
+        send(user, selected, {
+          message: JSON.stringify(modalValue)
+        }, type)
+        this.setState({
+          modalValue: ''
+        })
+        Dialog.hide()
         break
     }
   }
@@ -302,6 +379,13 @@ class ChatInput extends Component {
   onChangeModalValue (event, type) {
     this.setState({
       modalValue: event.target.value,
+      type
+    })
+  }
+
+  onChangeModalValueObject (data, type) {
+    this.setState({
+      modalValue: data,
       type
     })
   }
@@ -402,6 +486,15 @@ class ChatInput extends Component {
               icon={emojiPicker ? <CloseIcon /> : <FaceIcon />}
             />
           </Tooltip>
+          <Tooltip title='Request ethereum' placement='top'>
+            <BottomNavigationAction
+              label='Request ethereum'
+              value='request-ethereum'
+              onClick={this.requestPaymentModal}
+              className={classes.iconStyle}
+              icon={<Icon className={'fas fa-hand-holding-usd'} />}
+            />
+          </Tooltip>
         </BottomNavigation>
       </div>
     )
@@ -442,6 +535,9 @@ const styles = {
     right: 10,
     bottom: 115,
     zIndex: 999
+  },
+  dialogContainer: {
+    minWidth: 300
   }
 }
 

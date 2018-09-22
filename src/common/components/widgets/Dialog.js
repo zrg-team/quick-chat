@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 // import Card from '@material-ui/core/Card'
-import Modal from '@material-ui/core/Modal'
+import Dialog from '@material-ui/core/Dialog'
 import { withStyles } from '@material-ui/core/styles'
 
-let instanceModalComponent
-class ModalComponent extends Component {
+let instanceDialogComponent
+class DialogComponent extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -41,33 +41,31 @@ class ModalComponent extends Component {
   componentDidMount () {
     const { global } = this.props
     if (global) {
-      instanceModalComponent = this
+      instanceDialogComponent = this
     }
   }
 
   componentWillUnmount () {
     const { global } = this.props
     if (global) {
-      instanceModalComponent = null
+      instanceDialogComponent = null
     }
   }
 
   render () {
     // const { classes } = this.props
     const { isShow, component } = this.state
-    if (!isShow || !component) {
+    if (!component || !isShow) {
       return null
     }
     return (
-      <Modal
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'
+      <Dialog
         open={isShow}
-        className='modal-container'
         onClose={this.deactivateModal}
+        aria-labelledby='form-dialog-title'
       >
         {component}
-      </Modal>
+      </Dialog>
     )
   }
 }
@@ -78,17 +76,14 @@ const styles = theme => ({
   }
 })
 
-const ModalWithStyle = withStyles(styles)(ModalComponent)
+const DialogWithStyle = withStyles(styles)(DialogComponent)
 
 export default {
-  Component: ModalWithStyle,
+  Component: DialogWithStyle,
   show (component) {
-    instanceModalComponent && instanceModalComponent.activateModal(component)
+    instanceDialogComponent && instanceDialogComponent.activateModal(component)
   },
   hide () {
-    instanceModalComponent && instanceModalComponent.deactivateModal()
-  },
-  getApplicationNode () {
-    return (instanceModalComponent && instanceModalComponent.getApplicationNode()) || undefined
+    instanceDialogComponent && instanceDialogComponent.deactivateModal()
   }
 }
