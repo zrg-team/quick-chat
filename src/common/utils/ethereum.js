@@ -8,13 +8,27 @@ export function getDataSmartContract ({ functionName, typeParams, params }) {
     .toString('hex')
 }
 
-export function sendTransaction (data) {
-  if (!web3 || !web3.instance || !web3.injected) {
+export function getAccount () {
+  return new Promise((resolve, reject) => {
+    web3.instance.eth.getAccounts(function (err, accounts) {
+      if (err != null) {
+        resolve({ error: true })
+      } else if (accounts.length === 0) {
+        resolve({ error: false, message: 'Please login your MetaMask !' })
+      } else {
+        resolve({ error: false, address: web3.instance.eth.accounts[0] })
+      }
+    })
+  })
+}
+
+export function sendTransaction (defaultAccount, data) {
+  console.log('defaultAccount', defaultAccount)
+  if (!web3 || !web3.instance || !web3.injected || !defaultAccount) {
     const url = `https://www.myetherwallet.com/?to=${data.to}&value=${web3.instance.toWei(data.value, 'ether')}&gasLimit=300000&#send-transaction`
     window.open(url, '_blank')
     return false
   }
-  const defaultAccount = web3.instance.eth.accounts[0]
   return new Promise((resolve, reject) => {
     web3.instance.eth.sendTransaction({
       to: data.to,

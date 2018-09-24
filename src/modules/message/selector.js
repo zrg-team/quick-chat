@@ -162,6 +162,7 @@ export const selectorMessages = createSelector(
           date: new Date(item.time)
         }
       } catch (err) {
+        console.log('err', err)
         return undefined
       }
     }).filter(item => item)
