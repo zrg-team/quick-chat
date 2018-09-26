@@ -6,7 +6,8 @@ import {
   Public,
   Dashboard,
   ExitToApp,
-  PeopleTwoTone
+  PeopleTwoTone,
+  Map as MapIcon
 } from '@material-ui/icons'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { signOut } from '../utils/authentication'
@@ -36,6 +37,12 @@ const SIDDE_BARS = [
     icon: Dashboard
   },
   {
+    path: '/map',
+    sidebarName: 'Find Around You',
+    navbarName: 'Material Around',
+    icon: MapIcon
+  },
+  {
     path: '/friend',
     sidebarName: 'Friend',
     navbarName: 'Material PeopleTwoTone',
@@ -60,10 +67,10 @@ class MenuPage extends React.Component {
     this.handleDrawerToggle = this.handleDrawerToggle.bind(this)
   }
   componentDidMount () {
-    if (navigator.platform.indexOf('Win') > -1) {
-      // eslint-disable-next-line
-      const ps = new PerfectScrollbar(this.refs.mainPanel)
-    }
+    // if (navigator.platform.indexOf('Win') > -1) {
+    //   // eslint-disable-next-line
+    //   const ps = new PerfectScrollbar(this.refs.mainPanel)
+    // }
   }
   componentDidUpdate () {
     this.refs.mainPanel.scrollTop = 0
@@ -72,7 +79,7 @@ class MenuPage extends React.Component {
     this.setState({ mobileOpen: !this.state.mobileOpen })
   }
   render () {
-    const { classes, children, ...rest } = this.props
+    const { classes, children, marginTop = true, ...rest } = this.props
     return (
       <div className={classes.wrapper}>
         <Sidebar
@@ -91,7 +98,7 @@ class MenuPage extends React.Component {
             handleDrawerToggle={this.handleDrawerToggle}
             {...rest}
           />
-          <div className={classes.defaulRow} />
+          {marginTop && <div className={classes.defaulRow} />}
           <div className={classes.flexContainer}>
             <CSSTransitionGroup
               transitionAppear

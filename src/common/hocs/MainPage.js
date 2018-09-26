@@ -4,6 +4,7 @@ import { ConnectedRouter } from 'react-router-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react'
 import Routes from '../routes'
 import Modal from '../components/widgets/Modal'
+import Dialog from '../components/widgets/Dialog'
 import Notification from '../components/widgets/Notification'
 import PageLoading from '../components/widgets/PageLoading'
 import ProgressLoading from '../components/widgets/ProgressLoading'
@@ -24,6 +25,7 @@ export default class Main extends Component {
             <ProgressLoading.Component />
             <PageLoading.Component type='bars' />
             <Modal.Component global />
+            <Dialog.Component global />
             <Notification.Component global />
           </div>
         </PersistGate>

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import Modal from '@material-ui/core/Modal'
 import { withStyles } from '@material-ui/core/styles'
 
+let instanceModalComponent
 class ModalComponent extends Component {
   constructor (props) {
     super(props)
@@ -40,26 +41,29 @@ class ModalComponent extends Component {
   componentDidMount () {
     const { global } = this.props
     if (global) {
-      ModalWithStyle.instance = this
+      instanceModalComponent = this
     }
   }
 
   componentWillUnmount () {
     const { global } = this.props
     if (global) {
-      delete ModalWithStyle.instance
+      instanceModalComponent = null
     }
   }
 
   render () {
     // const { classes } = this.props
     const { isShow, component } = this.state
-
+    if (!isShow || !component) {
+      return null
+    }
     return (
       <Modal
         aria-labelledby='simple-modal-title'
         aria-describedby='simple-modal-description'
         open={isShow}
+        className='modal-container'
         onClose={this.deactivateModal}
       >
         {component}
@@ -79,12 +83,12 @@ const ModalWithStyle = withStyles(styles)(ModalComponent)
 export default {
   Component: ModalWithStyle,
   show (component) {
-    ModalWithStyle.instance && ModalWithStyle.instance.activateModal(component)
+    instanceModalComponent && instanceModalComponent.activateModal(component)
   },
   hide () {
-    ModalWithStyle.instance && ModalWithStyle.instance.deactivateModal()
+    instanceModalComponent && instanceModalComponent.deactivateModal()
   },
   getApplicationNode () {
-    return (ModalWithStyle.instance && ModalWithStyle.instance.getApplicationNode()) || undefined
+    return (instanceModalComponent && instanceModalComponent.getApplicationNode()) || undefined
   }
 }

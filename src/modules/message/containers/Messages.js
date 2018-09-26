@@ -9,6 +9,7 @@ import { getMessages, readed } from '../repository'
 import { setMessages } from '../actions'
 // import { setSessionMessages } from '../../../common/actions/session'
 import { selectorMessages } from '../selector'
+import { mapDispatchToProps as chatContainer } from './ChatInput'
 
 let messageListener = null
 function parseMessages (data) {
@@ -94,7 +95,8 @@ const mapDispatchToProps = (dispatch, props) => ({
       }
     })
     return result
-  }
+  },
+  ...chatContainer(dispatch, props)
 })
 
 const mapStateToProps = state => {

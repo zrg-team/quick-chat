@@ -48,6 +48,10 @@ const appStyle = theme => ({
     paddingLeft: 10,
     paddingRight: 10,
     flexDirection: 'column'
+  },
+  fullContainer: {
+    width: '100%',
+    height: '100%'
   }
 })
 

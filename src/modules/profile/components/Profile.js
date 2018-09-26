@@ -3,41 +3,93 @@ import { withStyles } from '@material-ui/core'
 import Icon from '@material-ui/core/Icon'
 import classNames from 'classnames'
 import red from '@material-ui/core/colors/red'
-import CardHeader from '../../libraries/Card/CardHeader'
-import Avatar from '../components/Avatar'
+import CardHeader from '../../../libraries/Card/CardHeader'
+import notification from '../../../common/components/widgets/Notification'
+import Button from '@material-ui/core/Button'
+import EditIcon from '@material-ui/icons/Edit'
+import TextField from '@material-ui/core/TextField'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 
 class Profile extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      open: false,
+      userInfo: {
+        description: '',
+        email: '',
+        phone: '',
+        address: ''
+      }
     }
   }
+  async componentDidMount () {
+    const { user, getUserInfo } = this.props
+    console.log('user la: ', user)
+    let userInfo = await getUserInfo(user.uid)
+    if (userInfo && userInfo.data) {
+      this.setState({userInfo: userInfo.data})
+      return notification.success('Synced.')
+    }
+    return notification.error('Sync error !')
+  }
 
+  handleClickOpen = () => {
+    this.setState({ open: true })
+  }
+
+  handleSubmit = async () => {
+    const { user, updateUserInfo } = this.props
+    const {userInfo} = this.state
+    let result = await updateUserInfo(user.uid, userInfo)
+    this.setState({ open: false })
+    if (result) {
+      return notification.success('Success')
+    }
+    return notification.error('Fail!')
+  }
+
+  handleClose = () => {
+    //this.setState({ open: false })
+  }
+
+  onChangeInput = (event) => {
+    const {userInfo} = this.state
+    console.log(this.userInfo)
+    userInfo[event.target.name] = event.target.value;
+    this.setState({userInfo})
+  }
   render () {
     const { classes } = this.props
+    const { userInfo } = this.state
+    const fab = {
+      color: 'secondary',
+      className: classes.fab,
+      icon: <EditIcon />
+    }
     return (
       <div className={classes.container}>
-        {/* <div className={classes.header}>
-        </div> */}
-        <CardHeader color='primary' className={classes.cardHeader}>
-          <Avatar />
+        <CardHeader color='primary'>
+          <img className={classes.profile_picture} src='https://gyazo.com/db9f7075f60979081a9da8ec47453bec.png' />
         </CardHeader>
-        <button className={classes.fab} type='file' tab-index='0'>
-          <Icon>edit</Icon>
-        </button>
         <div className={classes.content}>
-          <h className={classes.content_text}>Nani is one of the best football player used to play for Manchester United, the greatest football club on the world</h>
+          <h className={classes.content_text}>{userInfo.description ? userInfo.description : 'No information'}</h>
           <div className={classes.info}>
             <h className={classes.info_type}>Email</h>
-            <h className={classes.info_data}>john.smith@gmail.com</h>
+            <h className={classes.info_data}>{userInfo.email}</h>
           </div>
           <div className={classes.info}>
             <h className={classes.info_type}>Phone</h>
-            <h className={classes.info_data}>+1 234 567 890</h>
+            <h className={classes.info_data}>{userInfo.phone ? userInfo.phone : 'No information'}</h>
           </div>
           <div className={classes.info}>
             <h className={classes.info_type}>Address</h>
-            <h className={classes.info_data}>123 6th St.Melbourne</h>
+            <h className={classes.info_data}>{userInfo.address ? userInfo.address : 'No information'}</h>
           </div>
           <div className={classes.social_media}>
             <h className={classes.info_type}>Get In Touch! <Icon className={classNames(classes.icon, 'far fa-hand-point-left')} color='primary' /></h>
@@ -53,116 +105,177 @@ class Profile extends Component {
               </button>
             </div>
           </div>
+          <div>
+            <Button
+              variant='fab'
+              className={classes.change_info}
+              color={fab.color}
+              onClick={this.handleClickOpen}>
+              {fab.icon}
+            </Button>
+          </div>
         </div>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby='form-dialog-title'
+        >
+          <ValidatorForm
+            name='profile-form'
+            ref="form"
+            onSubmit={this.handleSubmit}
+            onError={errors => console.log(errors)}
+          >
+            <DialogTitle id='form-dialog-title'>Change User Profile</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please fill your information below 
+              </DialogContentText>
+                <TextValidator
+                  autoFocus
+                  margin='dense'
+                  validators={['maxStringLength:100']}
+                  errorMessages={['this text is smaller than 100 characters']}
+                  name='description'
+                  label='Description'
+                  value={userInfo.description}
+                  type='text'
+                  fullWidth
+                  onChange={this.onChangeInput}
+                />
+                <TextValidator
+                  autoFocus
+                  margin='dense'
+                  name='email'
+                  label='Email'
+                  value={userInfo.email}
+                  type='email'
+                  validators={['required']}
+                  errorMessages={['this field is required']}
+                  fullWidth
+                  onChange={this.onChangeInput}
+                />
+                <TextValidator
+                  autoFocus
+                  margin='dense'
+                  name='phone'
+                  label='Phone'
+                  value={userInfo.phone}
+                  type='number'
+                  validators={['required']}
+                  errorMessages={['this field is required']}
+                  fullWidth
+                  onChange={this.onChangeInput}
+                />
+                <TextValidator
+                  autoFocus
+                  margin='dense'
+                  name='address'
+                  label='Adress'
+                  validators={['maxStringLength:50']}
+                  errorMessages={['this text is smaller than 50 characters']}
+                  value={userInfo.address}
+                  type='text'
+                  fullWidth
+                  onChange={this.onChangeInput}
+                />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleClose} color='primary'>
+                Cancel
+              </Button>
+              <Button type='submit' color='primary'>
+                Confirm
+              </Button>
+            </DialogActions>
+          </ValidatorForm>
+        </Dialog>
       </div>
     )
   }
 }
 const styles = {
-  'body': {
-    'backgroundColor': '#E5E5E5'
+  container: {
+    alignItems: 'center',
+    background: 'white',
+    borderRadius: '3px',
+    boxShadow: '0px 2px 4px rgba(0,0,0,0.3)',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '500px',
+    margin: '0px auto',
+    overflow: 'hidden',
+    width: '300px'
   },
-  'button_focus': {
-    'outline': 'none'
+  fab: {
+    backgroundColor: '#EA4335',
+    border: 'none',
+    borderRadius: '50%',
+    boxShadow: '0px 1px 2px rgba(0,0,0,0.5)',
+    color: 'white',
+    fontSize: '18px',
+    fontWeight: '300',
+    height: '50px',
+    transform: 'translateY(-25px)',
+    width: '50px'
   },
-  'container': {
-    'width': '300px',
-    'height': '500px',
-    'boxShadow': '0px 2px 4px rgba(0,0,0,0.3)',
-    'background': 'white',
-    'margin': '0px auto',
-    'display': 'flex',
-    'flexDirection': 'column',
-    'alignItems': 'center',
-    'borderRadius': '3px',
-    'overflow': 'hidden'
-  },
-  'header': {
-    'width': '80%',
-    'backgroundColor': '#4285F4',
-    'height': '35%',
-    'display': 'flex',
-    'flexDirection': 'column',
-    'alignItems': 'center',
-    'justifyContent': 'center',
-    'boxShadow': '0px 1px 2px 0px rgba(0,0,0,0.5)'
-  },
-  'header_text': {
-    'color': 'white',
-    'fontSize': '16px',
-    'lineHeight': '1.6em',
-    'textShadow': '0px 2px 4px rgba(0,0,0,0.3)',
-    'marginTop': '15px'
-  },
-  'fab': {
-    'backgroundColor': '#EA4335',
-    'fontWeight': '300',
-    'color': 'white',
-    'fontSize': '18px',
-    'borderRadius': '50%',
-    'height': '50px',
-    'width': '50px',
-    'border': 'none',
-    'boxShadow': '0px 1px 2px rgba(0,0,0,0.5)',
-    'transform': 'translateY(-25px)'
-  },
-  'content': {
-    'padding': '0px 20px',
-    'width': '100%',
-    'transform': 'translateY(-25px)'
+  content: {
+    padding: '50px 20px',
+    transform: 'translateY(-25px)',
+    width: '100%'
   },
   'content_text': {
-    'fontSize': '16px',
-    'lineHeight': '1.6em'
+    fontSize: '16px',
+    lineHeight: '1.6em'
   },
   'profile_picture': {
-    'height': '100px',
-    'borderRadius': '50%',
-    'width': '100px',
-    'overflow': 'hidden'
+    borderRadius: '50%',
+    height: '100px',
+    overflow: 'hidden',
+    width: '100px'
   },
-  'profile_picture_full': {
-    'pointerEvents': 'none'
+  profile_picture_full: {
+    pointerEvents: 'none'
   },
-  'info': {
-    'marginTop': '10px'
+  info: {
+    marginTop: '10px'
   },
-  'info_type': {
-    'fontSize': '16px',
-    'lineHeight': '1.6em',
-    'fontWeight': '600',
-    'color': 'rgba(0,0,0,0.8)'
+  info_type: {
+    color: 'rgba(0,0,0,0.8)',
+    fontSize: '16px',
+    fontWeight: '600',
+    lineHeight: '1.6em'
   },
-  'info_data': {
-    'fontSize': '16px',
-    'lineHeight': '1.6em',
-    'float': 'right',
-    'color': 'grey'
+  info_data: {
+    color: 'grey',
+    float: 'right',
+    fontSize: '16px',
+    lineHeight: '1.6em'
   },
-  'social_media': {
-    'display': 'flex',
-    'flexDirection': 'column',
-    'alignItems': 'center',
-    'paddingTop': '20px'
+  social_media: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    paddingTop: '20px'
   },
-  'social_media_links': {
-    'display': 'flex',
-    'flexDirection': 'row',
-    'flexWrap': 'wrap',
-    'alignItems': 'center',
-    'justifyContent': 'center',
-    'width': '100%',
-    'height': '100%',
-    'marginTop': '5px'
+  social_media_links: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    height: '100%',
+    justifyContent: 'center',
+    marginTop: '5px',
+    width: '100%'
   },
-  'social_media_btn': {
-    'borderRadius': '50%',
-    'height': '40px',
-    'width': '40px',
-    'fontSize': '20px',
-    'color': 'white',
-    'border': 'none',
-    'textShadow': '0px 2px 4px rgba(0,0,0,0.3)'
+  social_media_btn: {
+    border: 'none',
+    borderRadius: '50%',
+    color: 'white',
+    fontSize: '20px',
+    height: '40px',
+    textShadow: '0px 2px 4px rgba(0,0,0,0.3)',
+    width: '40px'
   },
   icon: {
     margin: '0 auto'
@@ -172,6 +285,13 @@ const styles = {
     '&:hover': {
       color: red[800]
     }
+  },
+  change_info: {
+    position: 'absolute',
+    bottom: '10px',
+    right: '10px',
+    height: '40px',
+    width: '40px'
   }
 }
 export default withStyles(styles)(Profile)

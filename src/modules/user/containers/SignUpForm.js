@@ -16,7 +16,6 @@ const mapDispatchToProps = (dispatch, props) => ({
   signupEmail: async (email) => {
     try {
       const result = await authenticationEmail(email)
-      console.log('result', result)
       return { success: true }
     } catch (err) {
       console.log('err', err)

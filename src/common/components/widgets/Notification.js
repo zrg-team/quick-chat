@@ -53,6 +53,7 @@ const variantIcon = {
   info: InfoIcon,
 }
 
+let instanceNotification = null
 class ConsecutiveSnackbars extends React.Component {
   queue = []
 
@@ -62,11 +63,12 @@ class ConsecutiveSnackbars extends React.Component {
   }
 
   componentWillMount () {
-    ConsecutiveSnackbars.instance = this
+    instanceNotification = this
   }
 
   componentWillUnmount () {
-    delete ConsecutiveSnackbars.instance
+    // delete instanceNotification
+    instanceNotification = null
   }
 
   show = (message, variant) => {
@@ -110,44 +112,45 @@ class ConsecutiveSnackbars extends React.Component {
     const Icon = variantIcon[variant]
 
     return (
-      <div>
-        <Snackbar
-          key={key}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={this.state.open}
-          autoHideDuration={6000}
-          onClose={this.handleClose}
-          onExited={this.handleExited}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-        >
-          <SnackbarContent
-            className={classNames(classes[variant], classes.margin)}
-            aria-describedby='client-snackbar'
-            message={
-              <span id='client-snackbar' className={classes.message}>
-                <Icon color='primary' className={classNames(classes.icon || '', classes.iconVariant || '')} />
-                {message}
-              </span>
-            }
-            action={[
-              <IconButton
-                key='close'
-                aria-label='Close'
-                color='inherit'
-                className={classes.close}
-                onClick={this.handleClose}
-              >
-                <CloseIcon className={classes.icon} />
-              </IconButton>,
-            ]}
-          />
-        </Snackbar>
-      </div>
+      <Snackbar
+        key={key}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={this.state.open}
+        autoHideDuration={5000}
+        onClose={this.handleClose}
+        onExited={this.handleExited}
+        ContentProps={{
+          'aria-describedby': 'message-id',
+        }}
+      >
+        <SnackbarContent
+          className={classNames(classes[variant], classes.margin)}
+          aria-describedby='client-snackbar'
+          message={
+            <span id='client-snackbar' className={classes.message}>
+              {Icon && <Icon
+                color='primary'
+                className={classNames(classes.icon, classes.iconVariant)}
+              />}
+              <span>{message || ''}</span>
+            </span>
+          }
+          action={[
+            <IconButton
+              key='close'
+              aria-label='Close'
+              color='inherit'
+              className={classes.close}
+              onClick={this.handleClose}
+            >
+              <CloseIcon className={classes.icon} />
+            </IconButton>
+          ]}
+        />
+      </Snackbar>
     )
   }
 }
@@ -159,21 +162,21 @@ ConsecutiveSnackbars.propTypes = {
 export default {
   Component: withStyles(styles)(ConsecutiveSnackbars),
   show (message, variant = 'info') {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, variant)
+    instanceNotification && instanceNotification.show(message, variant)
   },
   success (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'success')
+    instanceNotification && instanceNotification.show(message, 'success')
   },
   error (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'error')
+    instanceNotification && instanceNotification.show(message, 'error')
   },
   info (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'info')
+    instanceNotification && instanceNotification.show(message, 'info')
   },
   warning (message) {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.show(message, 'warning')
+    instanceNotification && instanceNotification.show(message, 'warning')
   },
   hide () {
-    ConsecutiveSnackbars.instance && ConsecutiveSnackbars.instance.handleClose(null, null)
+    instanceNotification && instanceNotification.handleClose(null, null)
   }
 }

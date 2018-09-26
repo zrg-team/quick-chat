@@ -5,7 +5,7 @@ import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import { sendMessage, buzzMessage } from '../repository'
 
-const mapDispatchToProps = (dispatch, props) => ({
+export const mapDispatchToProps = (dispatch, props) => ({
   send: async (user, selected, {
     message
   }, type = 'text') => {

@@ -3,15 +3,9 @@ import {
   withStyles
 } from '@material-ui/core'
 import MenuPage from '../common/hocs/MenuPage'
-import YourQRCode from '../modules/user/containers/YourQRCode'
-import SearchFriend from '../modules/user/components/SearchFriend'
 import GridContainer from '../libraries/Grid/GridContainer'
-import GridItem from '../libraries/Grid/GridItem'
-import Card from '../libraries/Card/Card'
-import CardHeader from '../libraries/Card/CardHeader'
-import CardBody from '../libraries/Card/CardBody'
 import appStyle from '../common/styles/app'
-import Profile from '../modules/profile/components/Profile'
+import Profile from '../modules/profile/containers/Profile'
 
 class ProfilePage extends React.Component {
   constructor (props) {
@@ -28,7 +22,6 @@ class ProfilePage extends React.Component {
   }
   render () {
     const { classes } = this.props
-    const { search } = this.state
     return (
       <MenuPage>
         <div>

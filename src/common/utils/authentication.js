@@ -13,9 +13,6 @@ const EC = require('elliptic').ec
 
 export const createUserByEmail = async (email, iHere) => {
   const result = await firebase.auth.createUserWithEmailAndPassword(email, iHere)
-  // const ec = new EC('curve25519')
-  // const key = ec.keyFromPrivate(`${iHere}.${firebase.auth.currentUser.uid}`)
-  // const publicKey = key.getPublic(false, 'hex')
   firebase.auth.currentUser.sendEmailVerification()
   return result
 }
@@ -30,7 +27,6 @@ export const signInByEmail = async (email, proveMe) => {
     }
     throw new Error('LOGIN_FAIL')
   } catch (err) {
-    console.log('signInByEmail', err)
     return false
   }
 }
@@ -54,6 +50,9 @@ export function authenticationEmail (email) {
 export async function updatePublicKey (user, authentication) {
   const state = storeAccessible.getState()
   const approveHash = state.session.approveHash
+  if (!approveHash) {
+    throw new Error('MISSING_APPROVE_HASH')
+  }
   // FIXME: hashed on client or server
   const generateSessionID = firebase
     .functions
@@ -124,21 +123,25 @@ export function validateSessionSecurity (proveMe) {
 }
 
 export function shouldUnlock () {
-  const state = storeAccessible.getState()
-  const sessionSecurity = state.common.sessionSecurity
-  const approveID = state.session.approveID
-  if (approveID) {
-    return true
+  try {
+    const state = storeAccessible.getState()
+    const sessionSecurity = state.common.sessionSecurity
+    const approveID = state.session.approveID
+    if (approveID) {
+      return true
+    }
+    const auth = firebase.auth.currentUser
+    if (!auth) {
+      return signOut()
+    }
+    const loginTime = new Date(auth.metadata.lastSignInTime).getTime()
+    const key = getMe(sessionSecurity, `${loginTime}`)
+    if (!key) {
+      return signOut()
+    }
+    storeAccessible.dispatch(setUserApproveID(key))
+    return key
+  } catch (err) {
+    signOut()
   }
-  const auth = firebase.auth.currentUser
-  if (!auth) {
-    throw new Error('AUTHENTICATION_FAIL_MISSING')
-  }
-  const loginTime = new Date(auth.metadata.lastSignInTime).getTime()
-  const key = getMe(sessionSecurity, `${loginTime}`)
-  if (!key) {
-    throw new Error('AUTHENTICATION_KEY')
-  }
-  storeAccessible.dispatch(setUserApproveID(key))
-  return key
 }

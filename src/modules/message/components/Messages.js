@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { MessageList } from 'react-chat-elements'
+import { sendTransaction, getTransactionLink } from '../../../common/utils/ethereum'
 import { back } from '../../../common/utils/navigation'
 import notification from '../../../common/components/widgets/Notification'
 
@@ -11,6 +12,33 @@ class Messages extends Component {
     this.listRef = null
     this.shouldScroll = false
     this.assignRef = this.assignRef.bind(this)
+    this.interacted = this.interacted.bind(this)
+  }
+
+  async interacted (message) {
+    const { user, send, selected } = this.props
+    console.log('message click', message)
+    switch (message.messageType) {
+      case 'ethereum':
+        try {
+          const result = await sendTransaction({
+            to: message.data.address,
+            value: message.data.value
+          })
+          if (result) {
+            notification.success('Sent !')
+            return send(user, selected, {
+              message: result
+            }, 'ethereum-transaction')
+          }
+        } catch (err) {
+          notification.error('Send error !')
+        }
+        break
+      case 'ethereum-transaction':
+        window.open(getTransactionLink(message.data.txID), '_blank')
+        break
+    }
   }
 
   assignRef (ref) {
@@ -53,6 +81,7 @@ class Messages extends Component {
     return (
       <div>
         <MessageList
+          onClick={this.interacted}
           cmpRef={this.assignRef}
           className='message-list'
           lockable={false}
