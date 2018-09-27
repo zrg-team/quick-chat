@@ -8,12 +8,13 @@ import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
 import MessagesPage from '../pages/MessagesPage'
 import FriendPage from '../pages/FriendPage'
+import ProfilePage from '../pages/ProfilePage'
 import PublicPage from '../pages/PublicPage'
 import MapPage from '../pages/MapPage'
 // import VerifyPage from '../pages/VerifyPage'
 
-function Authetication (Page) {
-  return <AutheticationPage Page={Page} />
+function Authetication (Page, props) {
+  return <AutheticationPage Page={Page} {...props} />
 }
 
 export default class Root extends Component {
@@ -34,6 +35,7 @@ export default class Root extends Component {
         <Route path='/room' render={() => Authetication(HomePage)} />
         <Route path='/friend' render={() => Authetication(FriendPage)} />
         <Route path='/message' render={() => Authetication(MessagesPage)} />
+        <Route path='/profile/:uid' render={(props) => Authetication(ProfilePage, props)} />
         <Route path='/map' render={() => Authetication(MapPage)} />
       </div>
     )
