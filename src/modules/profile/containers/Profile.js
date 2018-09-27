@@ -1,6 +1,5 @@
 import { connect } from 'react-redux'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
-import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import { getProfile, updateProfile } from '../repository'
 import Profile from '../components/Profile'
 

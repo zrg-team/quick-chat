@@ -4,6 +4,7 @@ import 'firebase/firestore'
 import 'firebase/functions'
 import 'firebase/messaging'
 import 'firebase/database'
+import 'firebase/storage'
 import { FIREBASE_CONFIG } from '../models'
 
 const settings = {
@@ -17,6 +18,7 @@ const messaging = firebase.messaging()
 const firestore = firebase.firestore()
 const functions = firebase.functions()
 const realtime = firebase.database()
+const storage = firebase.storage()
 firestore.settings(settings)
 
 export default {
@@ -24,5 +26,6 @@ export default {
   db: firestore,
   realtime,
   functions,
-  messaging
+  messaging,
+  storage
 }

@@ -16,10 +16,14 @@ import Sidebar from '../components/elements/Sidebar'
 import NotificationHeader from '../../modules/user/containers/NotificationHeader'
 import appStyle from '../styles/app'
 import logo from '../../assets/images/chat-icon.png'
+import store from '../store'
 
 const SIDDE_BARS = [
   {
-    path: '/profile',
+    // path: '/profile',
+    onClick: () => {
+      return replace(`/profile/${store.store.getState().user.userInformation.uid}`)
+    },
     sidebarName: 'Profile',
     navbarName: 'Material Dashboard',
     icon: PeopleTwoTone

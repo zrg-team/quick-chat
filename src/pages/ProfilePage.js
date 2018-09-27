@@ -21,12 +21,11 @@ class ProfilePage extends React.Component {
     })
   }
   render () {
-    const { classes } = this.props
     return (
       <MenuPage>
         <div>
           <GridContainer justify='center'>
-            <Profile color='primary' />
+            <Profile color='primary' match={this.props.match} />
           </GridContainer>
         </div>
       </MenuPage>
