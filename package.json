@@ -32,10 +32,7 @@
     "react-loading": "^2.0.2",
     "react-markdown": "^3.4.1",
     "react-markdown-editor": "^1.0.0",
-<<<<<<< HEAD
     "react-material-ui-form-validator": "^2.0.2",
-=======
->>>>>>> origin/develop
     "react-nouislider": "2.0.1",
     "react-popper": "^1.0.2",
     "react-redux": "^5.0.6",
