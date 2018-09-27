@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { MessageList } from 'react-chat-elements'
-import { sendTransaction, getTransactionLink } from '../../../common/utils/ethereum'
+import { getAccount, sendTransaction, getTransactionLink } from '../../../common/utils/ethereum'
 import { back } from '../../../common/utils/navigation'
 import notification from '../../../common/components/widgets/Notification'
 
@@ -16,22 +16,31 @@ class Messages extends Component {
   }
 
   async interacted (message) {
-    const { user, send, selected } = this.props
+    const { user, sendTransactionMessage, selected } = this.props
     console.log('message click', message)
     switch (message.messageType) {
       case 'ethereum':
         try {
-          const result = await sendTransaction({
+          const account = await getAccount()
+          console.log('account', account)
+          if (!account.error && !account.address) {
+            return notification.error(account.message)
+          }
+          const result = await sendTransaction(account.address, {
             to: message.data.address,
             value: message.data.value
           })
           if (result) {
             notification.success('Sent !')
-            return send(user, selected, {
-              message: result
-            }, 'ethereum-transaction')
+            return sendTransactionMessage(message.uid, user, selected, {
+              txID: result,
+              to: message.data.address,
+              value: message.data.value,
+              from: account.address
+            }, 'ethereum')
           }
         } catch (err) {
+          console.log('err', err)
           notification.error('Send error !')
         }
         break
@@ -65,7 +74,7 @@ class Messages extends Component {
   }
 
   async componentDidMount () {
-    const { offset, selected, getMessages } = this.props
+    const { offset, transactionOffset, selected, getMessages } = this.props
     if (!selected) {
       return back()
     }
@@ -78,6 +87,7 @@ class Messages extends Component {
 
   render () {
     const { messages = [] } = this.props
+    console.log('messages', messages)
     return (
       <div>
         <MessageList

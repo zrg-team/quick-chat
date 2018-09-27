@@ -4,7 +4,8 @@ import * as actions from './actions'
 const defaultState = {
   selected: null,
   stage: {},
-  messages: {}
+  messages: {},
+  transactions: {}
 }
 
 const handlers = {
@@ -26,6 +27,25 @@ const handlers = {
         offset: action.payload.offset
           ? action.payload.offset
           : state.stage[action.payload.key].offset
+      }
+    }
+  }),
+  [actions.setTransactions]: (state, action) => ({
+    ...state,
+    transactions: {
+      ...state.transactions,
+      [action.payload.key]: [
+        ...state.transactions[action.payload.key] ? state.transactions[action.payload.key] : [],
+        ...action.payload.data
+      ]
+    },
+    stage: {
+      ...state.stage,
+      [action.payload.key]: {
+        ...state.stage[action.payload.key],
+        transactionOffset: action.payload.offset
+          ? action.payload.offset
+          : state.stage[action.payload.key].transactionOffset
       }
     }
   }),

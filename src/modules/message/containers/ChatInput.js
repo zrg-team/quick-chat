@@ -3,13 +3,14 @@ import ChatInput from '../components/ChatInput'
 import { cryptMe } from '../../../common/utils/cryptography'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
-import { sendMessage, buzzMessage } from '../repository'
+import { sendMessage, buzzMessage, sendTransactions } from '../repository'
 
 export const mapDispatchToProps = (dispatch, props) => ({
   send: async (user, selected, {
     message
   }, type = 'text') => {
     try {
+      console.log('send message', message, type)
       await sendMessage(user, selected, {
         data: cryptMe(message, selected.shared),
         from: user.uid,
@@ -21,6 +22,25 @@ export const mapDispatchToProps = (dispatch, props) => ({
   },
   buzz: (user, selected, unread) => {
     return buzzMessage(user, selected, unread)
+  },
+  sendTransactionMessage: async (messageID, user, selected, data, coin) => {
+    try {
+      await Promise.all([
+        sendMessage(user, selected, {
+          data: cryptMe(data.txID, selected.shared),
+          from: user.uid,
+          type: 'ethereum-transaction'
+        }),
+        sendTransactions(user, selected, {
+          sender: user.uid,
+          messageID,
+          coin,
+          ...data
+        })
+      ])
+    } catch (err) {
+      console.log('send err', err)
+    }
   }
 })
 

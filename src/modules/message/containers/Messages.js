@@ -5,13 +5,14 @@ import storeAccessible from '../../../common/utils/storeAccessible'
 import { MODULE_NAME as MODULE_USER } from '../../user/models'
 import { MODULE_NAME as MODULE_MESSAGE } from '../../message/models'
 import Messages from '../components/Messages'
-import { getMessages, readed } from '../repository'
-import { setMessages } from '../actions'
+import { getMessages, getTransactions, readed } from '../repository'
+import { setMessages, setTransactions } from '../actions'
 // import { setSessionMessages } from '../../../common/actions/session'
 import { selectorMessages } from '../selector'
 import { mapDispatchToProps as chatContainer } from './ChatInput'
 
 let messageListener = null
+let transactionListener = null
 function parseMessages (data) {
   const docs = []
   // const messages = []
@@ -45,20 +46,88 @@ function parseMessages (data) {
         ...data,
         data: item.data
       })
-      // messages.push({
-      //   ...data,
-      //   data: getMe(item.data, selected.shared)
-      // })
     }
   })
   return {
     docs: docs.sort((next, pre) => next.time - pre.time),
     max,
     isReaded
-    // messages: messages.sort((next, pre) => next.time - pre.time)
+  }
+}
+function parseTransactions (data) {
+  const docs = []
+  // const messages = []
+  const { selected, stage } = storeAccessible.getModuleState(MODULE_MESSAGE)
+  const { userInformation } = storeAccessible.getModuleState(MODULE_USER)
+  if (!selected) {
+    return []
+  }
+  const offset = stage[selected.id] ? stage[selected.id].transactionOffset : -1
+  let max = offset
+  data.forEach(doc => {
+    const item = doc.data()
+    const timestamp = item.time
+    if (timestamp && timestamp > +offset) {
+      max = +max > +timestamp ? +max : +timestamp
+      const sender = userInformation.uid === item.sender
+      const data = {
+        sender,
+        from: item.from,
+        time: timestamp,
+        coin: item.coin,
+        to: item.to,
+        value: item.value,
+        txID: item.txID,
+        uid: doc.id,
+        userSend: item.sender,
+        messageID: item.messageID
+      }
+      docs.push({
+        ...data,
+        data: item.data
+      })
+    }
+  })
+  return {
+    docs: docs.sort((next, pre) => next.time - pre.time),
+    max
   }
 }
 const mapDispatchToProps = (dispatch, props) => ({
+  getTransactions: async (room, offset) => {
+    const result = await loading(async () => {
+      try {
+        let first = true
+        if (transactionListener) {
+          transactionListener()
+          transactionListener = null
+        }
+        const { data, instance } = await getTransactions(room, offset, ({ data }) => {
+          if (!first) {
+            const { docs, max } = parseTransactions(data)
+            dispatch(setTransactions({
+              key: room.id,
+              data: docs,
+              offset: max
+            }))
+          }
+          first = false
+        })
+        transactionListener = instance
+        const { docs, max } = parseTransactions(data)
+        dispatch(setTransactions({
+          key: room.id,
+          data: docs,
+          offset: max
+        }))
+        return true
+      } catch (err) {
+        console.log(err)
+        return false
+      }
+    })
+    return result
+  },
   getMessages: async (room, offset) => {
     const result = await loading(async () => {
       try {
@@ -106,7 +175,10 @@ const mapStateToProps = state => {
     user: state[MODULE_USER].userInformation,
     offset: (state[MODULE_MESSAGE].stage[selected.id] &&
       state[MODULE_MESSAGE].stage[selected.id].offset) || -1,
-    messages: selectorMessages(state)
+    transactionOffset: (state[MODULE_MESSAGE].stage[selected.id] &&
+      state[MODULE_MESSAGE].stage[selected.id].transactionOffset) || -1,
+    messages: selectorMessages(state),
+    transactions: state[MODULE_MESSAGE].transactions[selected.id] || []
   }
 }
 
