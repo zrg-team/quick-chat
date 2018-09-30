@@ -16,6 +16,7 @@ import { initIPFS } from '../utils/ipfs'
 import { getUser } from '../../modules/user/repository'
 import { requestMessageToken } from '../utils/notifications'
 import Notification from '../components/widgets/Notification'
+import { setSessionLoading } from '../actions/session'
 import { setUserInformation, setNotification } from '../../modules/user/actions'
 import MainPage from './MainPage'
 
@@ -74,10 +75,18 @@ export default class Root extends Component {
       .collection('users')
       .doc(`${authUser.uid}`)
       .onSnapshot((snap) => {
-        if (snap.data() && !validateSessionKey(snap.data())) {
-          signOut()
-          storeAccessible.dispatch(setUserInformation(null))
+        const data = snap.data()
+        // if (data && !validateSessionKey(data)) {
+        //   signOut()
+        //   return storeAccessible.dispatch(setUserInformation(null))
+        // }
+        if (data && !data.publicKey) {
+          Notification.warning('Your account missing "publicKey", please logout and login again !')
         }
+        storeAccessible.dispatch(setUserInformation({
+          ...data,
+          uid: authUser.uid
+        }))
       })
   }
 
@@ -121,8 +130,8 @@ export default class Root extends Component {
             const { publicKey } = await updatePublicKey(user)
             user.publicKey = publicKey
           } else if (user && !validateSessionKey(user)) {
-            Notification.error('Your session key invalid. Maybe someone login to your account, please check !')
-            throw new Error('INVALID_SESSION_KEY')
+            // Notification.error('Your session key invalid. Maybe someone login to your account, please check !')
+            // throw new Error('INVALID_SESSION_KEY')
           } else if (user) {
             shouldGenerateApproveID(user).then(() => {
               shouldUnlock()
@@ -133,7 +142,11 @@ export default class Root extends Component {
         })
         if (result/* && !this.emailLink */) {
           this.notificationListener(authUser)
-          return storeAccessible.dispatch(setUserInformation(result))
+          storeAccessible.dispatch(setUserInformation(result))
+          setTimeout(() => {
+            storeAccessible.dispatch(setSessionLoading(false))
+          }, 1000)
+          return this.userListener(authUser)
         }
         // else if (result && this.emailLink) {
         //   storeAccessible.dispatch(setUserInformation(result))
@@ -161,6 +174,9 @@ export default class Root extends Component {
         this.notificationListenerInstance()
       }
       storeAccessible.dispatch(setUserInformation(null))
+      setTimeout(() => {
+        storeAccessible.dispatch(setSessionLoading(false))
+      }, 1000)
     } catch (err) {
       console.log('err', err)
       signOut()
@@ -169,6 +185,9 @@ export default class Root extends Component {
         this.notificationListenerInstance()
       }
       storeAccessible.dispatch(setUserInformation(null))
+      setTimeout(() => {
+        storeAccessible.dispatch(setSessionLoading(false))
+      }, 1000)
     }
   }
 

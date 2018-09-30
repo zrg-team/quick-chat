@@ -87,7 +87,6 @@ class Messages extends Component {
 
   render () {
     const { messages = [] } = this.props
-    console.log('messages', messages)
     return (
       <div>
         <MessageList

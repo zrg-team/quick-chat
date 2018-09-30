@@ -31,16 +31,19 @@ class MapPage extends React.Component {
   }
   handleAccept () {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const latitude = position.coords.latitude
-        const longitude = position.coords.longitude
-        this.setState({
-          requestDialog: false,
-          access: true,
-          firstLocation: { lat: latitude, lng: longitude }
-        })
+      this.setState({
+        requestDialog: false,
+        access: true
       }, () => {
-        this.handleClose()
+        navigator.geolocation.getCurrentPosition((position) => {
+          const latitude = position.coords.latitude
+          const longitude = position.coords.longitude
+          this.setState({
+            firstLocation: { lat: latitude, lng: longitude }
+          })
+        }, () => {
+          this.handleClose()
+        })
       })
     } else {
       Notification.warning('Geolocation is not supported by this browser.')

@@ -4,7 +4,8 @@ import * as actions from './actions'
 const defaultState = {
   userInformation: null,
   notifications: [],
-  friend: null
+  friend: null,
+  guestInformation: null
 }
 
 const handlers = {
@@ -29,7 +30,11 @@ const handlers = {
       ...state,
       ...{ notifications: [...state.notifications] }
     }
-  }
+  },
+  [actions.setGuestInformation]: (state, action) => ({
+    ...state,
+    ...{ guestInformation: action.payload }
+  })
 }
 
 export default handleActions(handlers, defaultState)

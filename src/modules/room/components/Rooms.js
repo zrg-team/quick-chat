@@ -37,7 +37,7 @@ class Rooms extends Component {
           dataSource={
             rooms.map(item => {
               return {
-                avatar: require('../../../assets/images/no-image-icon.png'),
+                avatar: item.guestAvatar || require('../../../assets/images/no-image-icon.png'),
                 alt: 'Reactjs',
                 title: item.guestName,
                 subtitle: item.message,

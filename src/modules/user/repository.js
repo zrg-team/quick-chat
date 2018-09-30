@@ -114,3 +114,23 @@ export const setUserPublicKey = async (user, publicKey) => {
       return { publicKey, response }
     })
 }
+
+export const updateUserInformation = async (userId, userInfo) => {
+  const newRef = firebase.db.collection('users').doc(`${userId}`)
+  return newRef.set({
+    ...userInfo
+  }).then(response => {
+    return true
+  })
+}
+
+export const getDownloadUrl = async (filename, userID) => {
+  return firebase
+      .storage
+      .ref(`${userID}/avatar`)
+      .child(filename)
+      .getDownloadURL()
+      .then(url => {
+        return url
+      })
+}

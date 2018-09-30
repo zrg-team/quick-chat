@@ -1,8 +1,9 @@
+
 importScripts("https://www.gstatic.com/firebasejs/4.2.0/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/4.2.0/firebase-messaging.js");
 
-/* Now initialize firebase app in the servie worker.
- *
+/*
+ * Now initialize firebase app in the servie worker.
  */
 firebase.initializeApp({
     apiKey: 'AIzaSyAS_NLgtV381v_hu43FgSlguEGAwki4sDI',
@@ -11,7 +12,7 @@ firebase.initializeApp({
     projectId: 'zerg-chatme-d8bba',
     storageBucket: 'zerg-chatme-d8bba.appspot.com',
     messagingSenderId: '447867740573'
-}); //These are example configuration value
+});
 
 var messaging = firebase.messaging();
 

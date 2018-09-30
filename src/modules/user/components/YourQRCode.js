@@ -32,11 +32,14 @@ class YourQRCode extends Component {
   async friendRequest () {
     const { message } = this.state
     const { makeFriend, user, friend } = this.props
+    if (!user.publicKey || !friend.publicKey) {
+      Notification.error('Your or your friend missing the "publicKey" !')
+    }
     const result = await makeFriend(user, friend, message)
     if (result) {
       return Notification.success('Friend requested !')
     }
-    Notification.error('Please check again !')
+    Notification.error('Opps, request error !')
   }
   render () {
     const { message } = this.state

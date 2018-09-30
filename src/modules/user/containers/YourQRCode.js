@@ -39,7 +39,9 @@ const mapDispatchToProps = (dispatch, props) => ({
           hostName: user.email,
           message,
           guestPublic: friend.publicKey,
-          userPublic: user.publicKey
+          userPublic: user.publicKey,
+          userAvatar: user.avatarURL,
+          guestAvatar: friend.avatarURL
         }
         const result = await createRoom(data)
         if (result && result.room) {

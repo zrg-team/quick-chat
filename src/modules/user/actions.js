@@ -7,3 +7,5 @@ export const setFriend = createAction(`${MODULE_NAME}_setFriend`)
 
 export const setNotification = createAction(`${MODULE_NAME}_setNotification`)
 export const pushNotification = createAction(`${MODULE_NAME}_pushNotification`)
+
+export const setGuestInformation = createAction(`${MODULE_NAME}_setGuestInformation`)
