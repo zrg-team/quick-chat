@@ -26,7 +26,8 @@ function parseDocs (data) {
       lasted: item.lasted && item.lasted.seconds,
       uid: doc.id,
       guestPublic: item.guestPublic,
-      userPublic: item.userPublic
+      userPublic: item.userPublic,
+      guestAvatar: item.guestAvatar
     })
   })
   return docs.sort((next, pre) => pre.lasted - next.lasted)

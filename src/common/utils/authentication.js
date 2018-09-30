@@ -47,7 +47,7 @@ export function authenticationEmail (email) {
     })
 }
 
-export async function updatePublicKey (user, authentication) {
+export async function updatePublicKey (user) {
   const state = storeAccessible.getState()
   const approveHash = state.session.approveHash
   if (!approveHash) {

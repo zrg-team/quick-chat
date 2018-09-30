@@ -13,7 +13,7 @@ import PublicPage from '../pages/PublicPage'
 import MapPage from '../pages/MapPage'
 // import VerifyPage from '../pages/VerifyPage'
 
-function Authetication (Page, props) {
+function Authetication (Page, props = {}) {
   return <AutheticationPage Page={Page} {...props} />
 }
 

@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import LoginForm from '../components/LoginForm'
+import { setSessionLoading } from '../../../common/actions/session'
 import { authenticationEmail, signInByEmail } from '../../../common/utils/authentication'
 
 const mapDispatchToProps = (dispatch, props) => ({
@@ -7,6 +8,7 @@ const mapDispatchToProps = (dispatch, props) => ({
     try {
       const result = await signInByEmail(email, password)
       if (result) {
+        dispatch(setSessionLoading(true))
         return { success: true }
       }
       return { success: false, message: 'Please verify your email !' }

@@ -2,7 +2,6 @@ import firebase from './firebase'
 import storeAccessible from './storeAccessible'
 import { setUserMessageToken } from '../actions/common'
 
-let registed = false
 export const requestMessageToken = (user) => {
   const { common } = storeAccessible.getState()
   if (!user ||

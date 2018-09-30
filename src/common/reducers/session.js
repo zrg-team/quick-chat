@@ -18,7 +18,8 @@ const defaultState = {
   isLoading: false,
   authetication: false,
   approveHash: null,
-  messages: {}
+  messages: {},
+  sessionLoading: false
 }
 
 const handlers = {
@@ -76,6 +77,12 @@ const handlers = {
     return {
       ...state,
       approveID: action.payload
+    }
+  },
+  [actions.setSessionLoading]: (state, action) => {
+    return {
+      ...state,
+      sessionLoading: action.payload
     }
   }
 }

@@ -110,7 +110,7 @@ class SignUpForm extends Component {
                   </CardHeader>
                   <CardBody>
                     <CustomInput
-                      labelText='Email...'
+                      labelText='Email'
                       id='email'
                       formControlProps={{
                         fullWidth: true
