@@ -30,7 +30,7 @@ const createMiddlewares = sagaMiddleware => {
     level: 'info',
     collapsed: true
   })
-  middlewares.push(logger)
+  process.env.NODE_ENV !== 'production' && middlewares.push(logger)
 
   // Router Middleware
   const router = routerMiddleware(history)
