@@ -141,7 +141,7 @@ class Map extends Component {
               return (
                 <MarkerWithLabel
                   icon={{
-                    url: userPin,
+                    url: user.avatarURL,
                     scaledSize: new window.google.maps.Size(60, 60)
                   }}
                   onClick={() => this.directTo(data.location, data.id)}

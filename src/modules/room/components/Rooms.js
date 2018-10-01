@@ -12,6 +12,9 @@ class Rooms extends Component {
 
   openRoom (item) {
     const { goTo, approveID } = this.props
+    if (!approveID) {
+      notification.warning("Can't open chat room now !")
+    }
     goTo(item, approveID)
   }
 
@@ -38,7 +41,7 @@ class Rooms extends Component {
             rooms.map(item => {
               return {
                 avatar: item.guestAvatar || require('../../../assets/images/no-image-icon.png'),
-                alt: 'Reactjs',
+                alt: 'rooms',
                 title: item.guestName,
                 subtitle: item.message,
                 date: item.lasted ? new Date(item.lasted) : undefined,
