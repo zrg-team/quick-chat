@@ -1,32 +1,15 @@
 import storeAccessible from '../../common/utils/storeAccessible'
 import { MODULE_NAME as MODULE_MAP, MESSAGE_TYPES } from './models'
+import ipfsBridge from '../../common/utils/ipfs'
 
-export const updateLocation = async (room, user, location, message = '') => {
-  if (!room) {
+export const updateLocation = async (user, location, message = '') => {
+  const { ipfs, topic } = await ipfsBridge.getIpfs()
+  if (!ipfs || !topic) {
     return false
   }
-  const { locations } = storeAccessible.getModuleState(MODULE_MAP)
+
   const time = new Date().toISOString()
-  const arrLocations = Object.keys(locations)
-  if (arrLocations.length >= 128) {
-    await Promise.all(arrLocations.map(peer => {
-      return room.sendTo(peer, JSON.stringify({
-        // _id: user.uid,
-        // uid: user.uid,
-        location,
-        updated: time,
-        // user,
-        data: {
-          message
-        },
-        type: MESSAGE_TYPES.handsake
-      }))
-    }))
-    return true
-  }
-  await room.broadcast(JSON.stringify({
-    // _id: user.uid,
-    // uid: user.uid,
+  return ipfs.publish(topic, Buffer.from(JSON.stringify({
     location,
     updated: time,
     // user,
@@ -34,24 +17,18 @@ export const updateLocation = async (room, user, location, message = '') => {
       message
     },
     type: MESSAGE_TYPES.broadcast
-  }))
-  return true
+  }))).then((result) => {
+    console.log('result', result)
+    return true
+  })
 }
 
-export const watchLocations = async (room, messageProcess, joinedProcess, leftProcess) => {
-  if (!room) {
+export const watchLocations = async (messageProcess) => {
+  const { ipfs, topic } = await ipfsBridge.getIpfs()
+  if (!ipfs || !topic) {
     return false
   }
-  room.on('peer joined', (peer) => {
-    console.log('Peer joined the room', peer)
-    joinedProcess && joinedProcess(peer)
-  })
-
-  room.on('peer left', (peer) => {
-    console.log('Peer left...', peer)
-    leftProcess && leftProcess(peer)
-  })
-  room.on('message', (message) => {
+  ipfsBridge.setOnMessage((message) => {
     console.log('Peer message...', message)
     messageProcess({ message })
   })

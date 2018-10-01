@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-// import store from 'store'
 import locate from '../utils/locate'
 import web3 from '../utils/web3'
-import firebase from '../utils/firebase'
 import { loading } from '../middlewares/effects'
 import storeAccessible from '../utils/storeAccessible'
 import {
@@ -10,116 +8,96 @@ import {
   shouldUnlock,
   updatePublicKey,
   validateSessionKey,
-  shouldGenerateApproveID
+  shouldGenerateApproveID,
+  onAuthenticationChanged
 } from '../utils/authentication'
-import { initIPFS } from '../utils/ipfs'
-import { getUser } from '../../modules/user/repository'
+import ipfsBridge from '../utils/ipfs'
 import { requestMessageToken } from '../utils/notifications'
 import Notification from '../components/widgets/Notification'
-import { setSessionLoading } from '../actions/session'
 import { setUserInformation, setNotification } from '../../modules/user/actions'
+import { getUser, userInformationListener, notificationListener } from '../../modules/user/repository'
 import MainPage from './MainPage'
 
 export default class Root extends Component {
   constructor (props) {
     super(props)
-
+    this.state = {
+      ready: false
+    }
     this.emailLink = false
     this.firstNotificationSync = true
     this.userListenerInstance = null
     this.notificationListenerInstance = null
     this.userListener = this.userListener.bind(this)
-    this.notificationListener = this.notificationListener.bind(this)
     this.authenticationChange = this.authenticationChange.bind(this)
+    this.handlerNotificationListener = this.handlerNotificationListener.bind(this)
   }
 
-  shouldComponentUpdate (nextProps) {
-    return false
+  shouldComponentUpdate (nextProps, nextState) {
+    const { ready } = nextState
+    return ready && ready !== this.state.ready
   }
 
   async componentDidMount () {
     try {
       await locate()
-      await web3.init()
-      await initIPFS()
-      // if (firebase.auth.isSignInWithEmailLink(window.location.href)) {
-      //   let email = store.get('authenticationMail')
-      //   if (!email) {
-      //     email = window.prompt('Please provide your email for confirmation')
-      //   }
-      //   // The client SDK will parse the code from the link for you.
-      //   firebase.auth.signInWithEmailLink(email, window.location.href)
-      //     .then(async (result) => {
-      //       // Clear email from storage.
-      //       store.set('authenticationMail', null)
-      //       this.emailLink = true
-      //     })
-      //     .catch(() => {
-      //       store.set('authenticationMail', null)
-      //       storeAccessible.dispatch(setUserInformation(null))
-      //       this.emailLink = false
-      //       signOut()
-      //     })
-      // }
-      firebase.auth.onAuthStateChanged(this.authenticationChange)
+      web3.init()
+      ipfsBridge.initIPFS()
+      onAuthenticationChanged(this.authenticationChange)
     } catch (error) {
       console.log('Fatal Error. Cannot Initialize.', error)
     }
   }
 
-  userListener (authUser) {
+  async userListener (authUser) {
     if (this.userListenerInstance) {
       this.userListenerInstance()
     }
-    this.userListenerInstance = firebase.db
-      .collection('users')
-      .doc(`${authUser.uid}`)
-      .onSnapshot((snap) => {
-        const data = snap.data()
-        // if (data && !validateSessionKey(data)) {
-        //   signOut()
-        //   return storeAccessible.dispatch(setUserInformation(null))
-        // }
-        if (data && !data.publicKey) {
-          Notification.warning('Your account missing "publicKey", please logout and login again !')
-        }
-        storeAccessible.dispatch(setUserInformation({
-          ...data,
-          uid: authUser.uid
-        }))
-      })
+    this.userListenerInstance = await userInformationListener(authUser.uid, (snap) => {
+      const data = snap.data()
+      // if (data && !validateSessionKey(data)) {
+      //   signOut()
+      //   return storeAccessible.dispatch(setUserInformation(null))
+      // }
+      if (data && !data.publicKey) {
+        Notification.warning('Your account missing "publicKey", please logout and login again !')
+      }
+      storeAccessible.dispatch(setUserInformation({
+        ...data,
+        uid: authUser.uid
+      }))
+    })
   }
 
-  notificationListener (authUser) {
+  async handlerNotificationListener (authUser) {
     if (this.notificationListenerInstance) {
       this.notificationListenerInstance()
     }
-    this.notificationListenerInstance = firebase.db
-      .collection('notifications')
-      .doc(`${authUser.uid}`)
-      .collection('messages')
-      .where('enable', '==', true)
-      .orderBy('time', 'desc')
-      .limit(100)
-      .onSnapshot((snap) => {
-        const data = []
-        snap.docs.forEach((ref) => {
-          const item = ref.data()
-          data.push({
-            uid: ref.id,
-            ...item
-          })
-          if (!this.firstNotificationSync) {
-            Notification.info(`${item.fromEmail}: ${item.message}`)
-          }
+    this.notificationListenerInstance = await notificationListener(authUser.uid, (snap) => {
+      const data = []
+      snap.docs.forEach((ref) => {
+        const item = ref.data()
+        data.push({
+          uid: ref.id,
+          ...item
         })
-        this.firstNotificationSync = false
-        storeAccessible.dispatch(setNotification(data))
+        if (!this.firstNotificationSync) {
+          Notification.info(`${item.fromEmail}: ${item.message}`)
+        }
       })
+      this.firstNotificationSync = false
+      storeAccessible.dispatch(setNotification(data))
+    })
   }
 
   async authenticationChange (authUser) {
     try {
+      const { ready } = this.state
+      if (!ready) {
+        this.setState({
+          ready: true
+        })
+      }
       if (authUser) {
         const result = await loading(async () => {
           const user = await getUser(authUser)
@@ -133,66 +111,36 @@ export default class Root extends Component {
             // Notification.error('Your session key invalid. Maybe someone login to your account, please check !')
             // throw new Error('INVALID_SESSION_KEY')
           } else if (user) {
-            shouldGenerateApproveID(user).then(() => {
-              shouldUnlock()
-            })
+            await shouldGenerateApproveID(user)
+            await shouldUnlock()
           }
           requestMessageToken(user)
           return user
         })
         if (result/* && !this.emailLink */) {
-          this.notificationListener(authUser)
+          this.handlerNotificationListener(authUser)
           storeAccessible.dispatch(setUserInformation(result))
-          setTimeout(() => {
-            storeAccessible.dispatch(setSessionLoading(false))
-          }, 1000)
           return this.userListener(authUser)
         }
-        // else if (result && this.emailLink) {
-        //   storeAccessible.dispatch(setUserInformation(result))
-        //   return setTimeout(() => {
-        //     window.location.replace('/')
-        //   }, 200)
-        // } else if (!result && this.emailLink) {
-        //   if (this.userListener) {
-        //     this.userListener()
-        //   }
-        //   this.userListener = firebase.db
-        //     .collection('users')
-        //     .doc(`${authUser.uid}`)
-        //     .onSnapshot((item) => {
-        //       this.notificationListener(authUser)
-        //       storeAccessible.dispatch(setUserInformation(item.data()))
-        //       this.userListener()
-        //     })
-        //   return true
-        // }
         signOut()
       }
+      console.log('this.notificationListenerInstance', this.notificationListenerInstance)
       // Logout clear all
-      if (this.notificationListenerInstance) {
-        this.notificationListenerInstance()
-      }
       storeAccessible.dispatch(setUserInformation(null))
-      setTimeout(() => {
-        storeAccessible.dispatch(setSessionLoading(false))
-      }, 1000)
     } catch (err) {
       console.log('err', err)
       signOut()
       // Logout clear all
-      if (this.notificationListenerInstance) {
-        this.notificationListenerInstance()
-      }
       storeAccessible.dispatch(setUserInformation(null))
-      setTimeout(() => {
-        storeAccessible.dispatch(setSessionLoading(false))
-      }, 1000)
     }
   }
 
   render () {
+    const { ready } = this.state
     const { store, persistor, history } = this.props
+    if (!ready) {
+      return null
+    }
     return (
       <MainPage
         store={store}

@@ -145,3 +145,7 @@ export function shouldUnlock () {
     signOut()
   }
 }
+
+export function onAuthenticationChanged (callback) {
+  firebase.auth.onAuthStateChanged(callback)
+}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { MessageList } from 'react-chat-elements'
-import { back } from '../../../common/utils/navigation'
+import { MessageList } from '../../../libraries/ChatElement'
+// import { back } from '../../../common/utils/navigation'
 import notification from '../../../common/components/widgets/Notification'
 
 class Messages extends Component {

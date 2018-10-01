@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import validate from 'validate.js'
-// import { Input } from 'react-chat-elements'
 import {
   Card,
   Icon,
@@ -22,7 +21,7 @@ import {
 import {
   Close as CloseIcon,
   AddAlert as AddAlertIcon,
-  TextsmsTwoTone as TextsmsTwoToneIcon,
+  // TextsmsTwoTone as TextsmsTwoToneIcon,
   LocationOn as LocationOnIcon,
   Face as FaceIcon,
   PersonalVideo as PersonalVideoIcon,
@@ -430,7 +429,7 @@ class ChatInput extends Component {
             onChange: this.onChange
           }}
         />
-        <BottomNavigation value={value} onChange={this.handleChange} className={classes.root}>
+        <BottomNavigation className={classes.root}>
           <Tooltip title='Buzz your friend !' placement='top'>
             <BottomNavigationAction
               label='Buzz'
@@ -449,7 +448,7 @@ class ChatInput extends Component {
               icon={<LocationOnIcon />}
             />
           </Tooltip>
-          <Tooltip title='Write complex text !' placement='top'>
+          {/* <Tooltip title='Write complex text !' placement='top'>
             <BottomNavigationAction
               label='Markdown'
               value='markdown'
@@ -457,7 +456,7 @@ class ChatInput extends Component {
               className={classes.iconStyle}
               icon={<TextsmsTwoToneIcon />}
             />
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title='Youtube video' placement='top'>
             <BottomNavigationAction
               label='Youtube'
@@ -510,7 +509,10 @@ const styles = {
     height: 60
   },
   iconStyle: {
-    paddingTop: '0px !important'
+    paddingTop: '0px !important',
+    minWidth: '0px',
+    paddingLeft: 0,
+    paddingRight: 0
   },
   card: {
     maxWidth: '100%'
@@ -537,7 +539,7 @@ const styles = {
     zIndex: 999
   },
   dialogContainer: {
-    minWidth: 300
+    minWidth: 260
   }
 }
 

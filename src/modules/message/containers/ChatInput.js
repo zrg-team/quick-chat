@@ -10,7 +10,6 @@ export const mapDispatchToProps = (dispatch, props) => ({
     message
   }, type = 'text') => {
     try {
-      console.log('send message', message, type)
       await sendMessage(user, selected, {
         data: cryptMe(message, selected.shared),
         from: user.uid,
@@ -39,7 +38,7 @@ export const mapDispatchToProps = (dispatch, props) => ({
         })
       ])
     } catch (err) {
-      console.log('send err', err)
+      console.error('send err', err)
     }
   }
 })

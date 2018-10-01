@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogContentText
 } from '@material-ui/core'
-import { ipfsInstance } from '../common/utils/ipfs'
+import ipfsBridge from '../common/utils/ipfs'
 import appStyle from '../common/styles/app'
 import { MAP_API_URL } from '../common/models'
 import MenuPage from '../common/hocs/MenuPage'
@@ -20,8 +20,7 @@ class MapPage extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      room: null,
-      ipfs: null,
+      ipfs: false,
       requestDialog: false,
       access: false,
       firstLocation: null
@@ -31,6 +30,7 @@ class MapPage extends React.Component {
   }
   handleAccept () {
     if (navigator.geolocation) {
+      console.log('Here getCurrentPosition')
       this.setState({
         requestDialog: false,
         access: true
@@ -38,6 +38,7 @@ class MapPage extends React.Component {
         navigator.geolocation.getCurrentPosition((position) => {
           const latitude = position.coords.latitude
           const longitude = position.coords.longitude
+          console.log('getCurrentPosition', { lat: latitude, lng: longitude })
           this.setState({
             firstLocation: { lat: latitude, lng: longitude }
           })
@@ -57,20 +58,22 @@ class MapPage extends React.Component {
   }
   async componentDidMount () {
     try {
-      const { room, ipfs } = ipfsInstance
-      this.setState({ requestDialog: true, room, ipfs })
+      const result = await ipfsBridge.getIpfs()
+      if (result) {
+        return this.setState({ requestDialog: true, ipfs: true })
+      }
+      throw new Error('IPFS_ERROR')
     } catch (err) {
+      console.log('err', err)
       replace('/public')
     }
   }
   render () {
-    const { room, ipfs, requestDialog, access, firstLocation } = this.state
+    const { ipfs, requestDialog, access, firstLocation } = this.state
     const { classes } = this.props
     return (
       <MenuPage>
-        {(room && ipfs) ? <Map
-          room={room}
-          ipfs={ipfs}
+        {(ipfs) ? <Map
           access={access}
           googleMapURL={MAP_API_URL}
           firstLocation={firstLocation}

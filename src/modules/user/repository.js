@@ -134,3 +134,21 @@ export const getDownloadUrl = async (filename, userID) => {
         return url
       })
 }
+
+export const userInformationListener = async (userUID, callback) => {
+  return firebase.db
+    .collection('users')
+    .doc(`${userUID}`)
+    .onSnapshot(callback)
+}
+
+export const notificationListener = async (userUID, callback) => {
+  return firebase.db
+    .collection('notifications')
+    .doc(`${userUID}`)
+    .collection('messages')
+    .where('enable', '==', true)
+    .orderBy('time', 'desc')
+    .limit(100)
+    .onSnapshot(callback)
+}

@@ -2,8 +2,8 @@ import React from 'react'
 
 class NoPage extends React.Component {
   render () {
-    const { sessionLoading, processLoading } = this.props
-    if (sessionLoading || processLoading) {
+    const { sessionSecurity, sessionLoading, processLoading } = this.props
+    if (sessionSecurity || sessionLoading || processLoading) {
       return (
         <div className='loading-session-body'>
           <div className='loading'>

@@ -8,11 +8,12 @@ class AutheticationPage extends Component {
     this.processLoading = sessionLoading || false
   }
   render () {
-    const { Page, user, approveID, sessionLoading, ...props } = this.props
-    if (!user || !approveID || sessionLoading) {
+    const { Page, sessionSecurity, approveID, sessionLoading, ...props } = this.props
+    if (!sessionSecurity || !approveID || sessionLoading) {
       return (<NoPage
         sessionLoading={sessionLoading}
         processLoading={this.processLoading}
+        sessionSecurity={sessionSecurity}
       />)
     }
     return (
@@ -24,7 +25,8 @@ class AutheticationPage extends Component {
 const mapStateToProps = state => ({
   user: state.user.userInformation,
   approveID: state.session.approveID,
-  sessionLoading: state.session.sessionLoading
+  sessionLoading: state.session.sessionLoading,
+  sessionSecurity: state.common.sessionSecurity
 })
 
 export default connect(mapStateToProps, null)(AutheticationPage)
