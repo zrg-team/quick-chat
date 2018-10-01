@@ -10261,18 +10261,6 @@ react-app-rewired@^1.6.2:
     cross-spawn "^5.1.0"
     dotenv "^4.0.0"
 
-react-chat-elements@^10.0.2:
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/react-chat-elements/-/react-chat-elements-10.0.3.tgz#b13d332aa8eed7ba9e5e5dd9ea52c462822709f5"
-  dependencies:
-    classnames "^2.2.5"
-    moment "^2.18.1"
-    react-icons "^2.2.5"
-    react-native-icons "^0.7.1"
-    react-native-vector-icons "^4.4.2"
-    react-progress-bar.js "^0.2.3"
-    react-spinkit "^3.0.0"
-
 react-datetime@2.14.0:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/react-datetime/-/react-datetime-2.14.0.tgz#c7859c5b765275d7980f1cca27c03a727ff9ccef"

@@ -1,6 +1,15 @@
 
-import { takeEvery, select } from 'redux-saga/effects'
-import { fetchStart, fetchSuccess, fetchFailure, loadStart, loadEnd } from '../actions/session'
+import { put, takeEvery, select, takeLatest } from 'redux-saga/effects'
+import {
+  setSessionMessages,
+  setSessionLoading,
+  setUserApproveID,
+  fetchStart,
+  fetchSuccess,
+  fetchFailure,
+  loadStart,
+  loadEnd
+} from '../actions/session'
 // import PageLoading from '../components/widgets/PageLoading'
 import ProgressLoading from '../components/widgets/ProgressLoading'
 
@@ -41,6 +50,20 @@ function * onLoadingChanged () {
   }
 }
 
+function * onApproveAccessChanged (action) {
+  const { payload } = action
+  if (payload) {
+    yield put({ type: setSessionLoading.toString(), payload: false })
+  }
+}
+
+function * onPersistChanged (action) {
+  const { payload } = action
+  if (payload && payload.common && payload.common.sessionSecurity) {
+    yield put({ type: setSessionLoading.toString(), payload: true })
+  }
+}
+
 function * watchLoadStart () {
   yield takeEvery(loadStart.toString(), onLoadingChanged)
 }
@@ -49,10 +72,25 @@ function * watchLoadEnd () {
   yield takeEvery(loadEnd.toString(), onLoadingChanged)
 }
 
+function * watchApproveAccess () {
+  yield takeEvery(setUserApproveID.toString(), onApproveAccessChanged)
+}
+
+function * watchSessionSecurity () {
+  yield takeEvery(setSessionMessages.toString(), onApproveAccessChanged)
+}
+
+function * wathPersist () {
+  yield takeLatest('persist/REHYDRATE', onPersistChanged)
+}
+
 export default [
   watchFetchStart(),
   watchFetchSuccess(),
   watchFetchFailure(),
   watchLoadStart(),
-  watchLoadEnd()
+  watchLoadEnd(),
+  wathPersist(),
+  watchApproveAccess(),
+  watchSessionSecurity()
 ]

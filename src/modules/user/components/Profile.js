@@ -68,18 +68,18 @@ class Profile extends Component {
           {...this.props}
         />
         <div className={classes.content}>
-          <h className={classes.content_text}>{user.description || 'No information'}</h>
+          <span className={classes.content_text}>{user.description || 'No information'}</span>
           <div className={classes.info}>
-            <h className={classes.info_type}>Email</h>
-            <h className={classes.info_data}>{user.email}</h>
+            <span className={classes.info_type}>Email</span>
+            <span className={classes.info_data}>{user.email}</span>
           </div>
           <div className={classes.info}>
-            <h className={classes.info_type}>Phone</h>
-            <h className={classes.info_data}>{user.phone || 'No information'}</h>
+            <span className={classes.info_type}>Phone</span>
+            <span className={classes.info_data}>{user.phone || 'No information'}</span>
           </div>
           <div className={classes.info}>
-            <h className={classes.info_type}>Address</h>
-            <h className={classes.info_data}>{user.address || 'No information'}</h>
+            <span className={classes.info_type}>Address</span>
+            <span className={classes.info_data}>{user.address || 'No information'}</span>
           </div>
           <div className={classes.social_media}>
             <div className={classes.social_media_links}>
