@@ -40,8 +40,8 @@ const mapDispatchToProps = (dispatch, props) => ({
           message,
           guestPublic: friend.publicKey,
           userPublic: user.publicKey,
-          userAvatar: user.avatarURL,
-          guestAvatar: friend.avatarURL
+          userAvatar: user.avatarURL || 'https://themango.co/wp-content/uploads/2018/03/Mango-Default-Profile-Pic.png',
+          guestAvatar: friend.avatarURL || 'https://themango.co/wp-content/uploads/2018/03/Mango-Default-Profile-Pic.png'
         }
         const result = await createRoom(data)
         if (result && result.room) {
