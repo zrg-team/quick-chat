@@ -30,6 +30,13 @@ class Rooms extends Component {
     return notification.error('Sync error !')
   }
 
+  async componentWillReceiveProps (nextProps) {
+    const { user, getRooms } = nextProps
+    if (!this.props.user && user) {
+      await getRooms(user)
+    }
+  }
+
   render () {
     const { rooms = [] } = this.props
     return (
