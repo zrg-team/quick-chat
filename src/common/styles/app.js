@@ -29,7 +29,7 @@ const appStyle = theme => ({
   },
   container,
   defaulRow: {
-    height: '72px',
+    height: '60px',
     width: '100%'
   },
   fullHeight: {

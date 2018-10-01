@@ -7,7 +7,7 @@ const styles = {
     boxShadow: '0px 2px 4px rgba(0,0,0,0.3)',
     display: 'flex',
     flexDirection: 'column',
-    height: '500px',
+    height: 'auto',
     margin: '0px auto',
     overflow: 'hidden',
     width: '300px'
@@ -29,11 +29,11 @@ const styles = {
     transform: 'translateY(-25px)',
     width: '100%'
   },
-  'content_text': {
+  content_text: {
     fontSize: '16px',
     lineHeight: '1.6em'
   },
-  'profile_picture': {
+  profile_picture: {
     borderRadius: '50%',
     height: '100px',
     overflow: 'hidden',
