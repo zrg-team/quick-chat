@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Input } from 'react-chat-elements'
+import { Input } from '../../../libraries/ChatElement'
 import {
   withStyles
 } from '@material-ui/core'

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { MessageList } from 'react-chat-elements'
+import { MessageList } from '../../../libraries/ChatElement'
 import { getAccount, sendTransaction, getTransactionLink } from '../../../common/utils/ethereum'
 import { back } from '../../../common/utils/navigation'
 import notification from '../../../common/components/widgets/Notification'

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import Input from '@material-ui/core/Input'
-import { MessageBox } from 'react-chat-elements'
+import { MessageBox } from '../../../libraries/ChatElement'
 import { MAP_OPTIONS } from '../../../common/models'
 import { withStyles } from '@material-ui/core/styles'
 import Notification from '../../../common/components/widgets/Notification'
-import userPin from '../../../assets/images/userMapMarker.png'
+// import userPin from '../../../assets/images/userMapMarker.png'
 import Button from '../../../libraries/CustomButtons/Button'
 const {
   withScriptjs,

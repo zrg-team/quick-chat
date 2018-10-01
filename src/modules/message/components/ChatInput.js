@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import validate from 'validate.js'
-// import { Input } from 'react-chat-elements'
 import {
   Card,
   Icon,
@@ -22,7 +21,7 @@ import {
 import {
   Close as CloseIcon,
   AddAlert as AddAlertIcon,
-  TextsmsTwoTone as TextsmsTwoToneIcon,
+  // TextsmsTwoTone as TextsmsTwoToneIcon,
   LocationOn as LocationOnIcon,
   Face as FaceIcon,
   PersonalVideo as PersonalVideoIcon,

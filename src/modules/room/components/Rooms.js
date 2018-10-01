@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ChatList } from 'react-chat-elements'
+import { ChatList } from '../../../libraries/ChatElement'
 import notification from '../../../common/components/widgets/Notification'
 
 class Rooms extends Component {
