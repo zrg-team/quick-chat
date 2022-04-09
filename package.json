@@ -18,7 +18,7 @@
     "i18n-js": "https://github.com/fnando/i18n-js/tarball/v3.0.0",
     "ipfs": "^0.31.7",
     "ipfs-pubsub-room": "^1.4.0",
-    "moment": "^2.22.0",
+    "moment": "^2.29.2",
     "node-sass-chokidar": "1.2.2",
     "npm-run-all": "4.1.2",
     "qrcode.react": "^0.8.0",
